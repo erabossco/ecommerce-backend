@@ -4,7 +4,7 @@ import type { EnvSchemaType } from "./env.schema.js";
  * Builds the application configuration object
  * from validated environment variables.
  *
- * Centralizes application-level runtime settings,
+ * Centralises application-level runtime settings,
  * feature flags, request limits, and environment helpers.
  */
 export const createAppConfig = (env: EnvSchemaType) => ({
@@ -26,5 +26,5 @@ export const createAppConfig = (env: EnvSchemaType) => ({
     features: {
         enableSwagger: true,
         enableQueues: true,
-    }
+    },
 });
