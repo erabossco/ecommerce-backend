@@ -13,10 +13,10 @@ export const envSchema = z.object({
     CLIENT_URL: z.string().min(1),
     DATABASE_URL: z.url(),
 
-    // JWT_ACCESS_SECRET: z.string().min(10),
-    // JWT_ACCESS_EXPIRES_IN: z.string(),
-    // JWT_REFRESH_SECRET: z.string().min(10),
-    // JWT_REFRESH_EXPIRES_IN: z.string(),
+    JWT_ACCESS_SECRET: z.string().min(10),
+    JWT_ACCESS_EXPIRES_IN: z.string(),
+    JWT_REFRESH_SECRET: z.string().min(10),
+    JWT_REFRESH_EXPIRES_IN: z.string(),
 
     // REDIS_HOST: z.string().min(1),
     // REDIS_PORT: z.coerce.number(),
