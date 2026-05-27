@@ -1,24 +1,24 @@
 import cors from "cors";
-import { frontendUrls } from "../env/env.config.js"
+import { clientUrls } from "../env/env.config.js"
 
 /**
  * Cross-Origin Resource Sharing (CORS) configuration
  *
  * CORS is a browser security mechanism
- * that controls which frontend applications
+ * that controls which client / frontend applications
  * are allowed to communicate with the backend API.
  *
  * This middleware helps:
  * Prevent unauthorized cross-origin requests
- * Allow trusted frontend applications
+ * Allow authorised client applications
  * Support secure frontend-backend communication
  */
 
 const corsConfig = cors({
     /**
-     * Only authorised / listed frontend URLs are allowed
+     * Only authorised / listed client URLs are allowed
      */
-    origin: frontendUrls,
+    origin: clientUrls,
 
     /**
      * Enables the browser to send:
