@@ -8,3 +8,60 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ============
+//    ENUMS
+// ============
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// ===============
+//     MODELS
+// ===============
+
+model User {
+  id           String @id @default(cuid())
+  firstName    String
+  LastName     String
+  email        String @unique
+  passwordHash String
+
+  role            UserRole @default(USER)
+  isEmailVerified Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  session      Session[]
+  refreshToken RefreshToken[]
+}
+
+model Session {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userAgent String?
+  ipAddress String?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RefreshToken {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokenHash String @unique
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+}
