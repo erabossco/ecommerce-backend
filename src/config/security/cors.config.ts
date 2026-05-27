@@ -1,5 +1,5 @@
 import cors from "cors";
-import { clientUrls } from "../env/env.config.js"
+import { clientUrls } from "../env/env.js"
 
 /**
  * Cross-Origin Resource Sharing (CORS) configuration
