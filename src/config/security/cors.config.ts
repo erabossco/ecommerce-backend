@@ -1,5 +1,5 @@
 import cors from "cors";
-import { clientUrls } from "../env/env.js"
+import { envConfig } from "../env/index.js"
 
 /**
  * Cross-Origin Resource Sharing (CORS) configuration
@@ -18,7 +18,7 @@ const corsConfig = cors({
     /**
      * Only authorised / listed client URLs are allowed
      */
-    origin: clientUrls,
+    origin: envConfig.app.clientUrl,
 
     /**
      * Enables the browser to send:
