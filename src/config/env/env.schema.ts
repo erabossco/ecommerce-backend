@@ -30,6 +30,18 @@ export const envSchema = z.object({
 
     UPLOAD_DIR: z.string().default("uploads"),
     STORAGE_BASE_URL: z.url(),
+    // AWS_REGION: z.string(),
+    // AWS_ACCESS_KEY_ID: z.string(),
+    // AWS_SECRET_ACCESS_KEY: z.string(),
+    // AWS_BUCKET_NAME: z.string(),
+
+    PAYMENT_PROVIDER: z.enum(["stripe", "sslcommerz", "paypal"]),
+    PAYMENT_MODE: z.enum(["sandbox", "live"]),
+    PAYMENT_CURRENCY: z.string(),
+    STRIP_SECRET_KEY: z.string(),
+    STRIPE_WEBHOOK_SECRET: z.string(),
+    SSLCOMMERZ_STORE_ID: z.string(),
+    SSLCOMMERZ_STORE_PASSWORD: z.string(),
 
 
 });

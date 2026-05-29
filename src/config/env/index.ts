@@ -7,6 +7,7 @@ import { createJwtConfig } from "./jwt.env.js";
 import { createRedisConfig } from "./redis.env.js";
 import { createMailConfig } from "./mail.env.js";
 import { createStorageConfig } from "./storage.env.js";
+import { createPaymentConfig } from "./payment.env.js";
 
 /**
  * Validate environment variables using the Zod schema.
@@ -37,5 +38,6 @@ export const envConfig = Object.freeze({
     redis: createRedisConfig(env),
     mail: createMailConfig(env),
     storage: createStorageConfig(env),
+    payment: createPaymentConfig(env),
 });
 
