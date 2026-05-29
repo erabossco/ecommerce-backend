@@ -26,6 +26,13 @@ export const envSchema = z.object({
     REDIS_PORT: z.coerce.number().default(6379),
     REDIS_PASSWORD: z.string().optional().or(z.literal("")),
 
+    // Queue redis config
+    QUEUE_REDIS_HOST: z.string(),
+    QUEUE_REDIS_PORT: z.coerce.number().default(6379),
+    QUEUE_REDIS_PASSWORD: z.string(),
+    QUEUE_WORKER_CONCURRENCY: z.coerce.number(),
+    QUEUE_MAX_ATTEMPTS: z.coerce.number(),
+
     // SMTP mail config
     MAIL_HOST: z.string(),
     MAIL_PORT: z.coerce.number(),
