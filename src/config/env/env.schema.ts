@@ -22,11 +22,11 @@ export const envSchema = z.object({
     REDIS_PORT: z.coerce.number().default(6379),
     REDIS_PASSWORD: z.string().optional().or(z.literal("")),
 
-    // MAIL_HOST: z.string(),
-    // MAIL_PORT: z.coerce.number(),
-    // MAIL_USER: z.string(),
-    // MAIL_PASSWORD: z.string(),
-    // MAIL_FROM: z.string(),
+    MAIL_HOST: z.string(),
+    MAIL_PORT: z.coerce.number(),
+    MAIL_USER: z.string(),
+    MAIL_PASSWORD: z.string(),
+    MAIL_FROM: z.string(),
 
 });
 
