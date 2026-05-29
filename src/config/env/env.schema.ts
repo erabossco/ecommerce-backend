@@ -18,9 +18,9 @@ export const envSchema = z.object({
     JWT_REFRESH_SECRET: z.string().min(10),
     JWT_REFRESH_EXPIRES_IN: z.string(),
 
-    // REDIS_HOST: z.string().min(1),
-    // REDIS_PORT: z.coerce.number(),
-    // REDIS_PASSWORD: z.string().optional().or(z.literal("")),
+    REDIS_HOST: z.string().min(1),
+    REDIS_PORT: z.coerce.number().default(6379),
+    REDIS_PASSWORD: z.string().optional().or(z.literal("")),
 
     // MAIL_HOST: z.string(),
     // MAIL_PORT: z.coerce.number(),
