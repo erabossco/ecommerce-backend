@@ -28,6 +28,10 @@ export const envSchema = z.object({
     MAIL_PASSWORD: z.string(),
     MAIL_FROM: z.string(),
 
+    UPLOAD_DIR: z.string().default("uploads"),
+    STORAGE_BASE_URL: z.url(),
+
+
 });
 
 export type EnvSchemaType = z.infer<typeof envSchema>
