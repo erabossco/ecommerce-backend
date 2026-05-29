@@ -18,7 +18,7 @@ export const createPaymentConfig = (env: EnvSchemaType) => ({
     currency: env.PAYMENT_CURRENCY,
 
     stripe: {
-        secretKey: env.STRIP_SECRET_KEY,
+        secretKey: env.STRIPE_SECRET_KEY,
         webhookSecret: env.STRIPE_WEBHOOK_SECRET,
     },
     sslcommerz: {

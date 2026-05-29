@@ -38,7 +38,7 @@ export const envSchema = z.object({
     PAYMENT_PROVIDER: z.enum(["stripe", "sslcommerz", "paypal"]),
     PAYMENT_MODE: z.enum(["sandbox", "live"]),
     PAYMENT_CURRENCY: z.string(),
-    STRIP_SECRET_KEY: z.string(),
+    STRIPE_SECRET_KEY: z.string(),
     STRIPE_WEBHOOK_SECRET: z.string(),
     SSLCOMMERZ_STORE_ID: z.string(),
     SSLCOMMERZ_STORE_PASSWORD: z.string(),
