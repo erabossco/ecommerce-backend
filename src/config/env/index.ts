@@ -3,6 +3,7 @@ import z from "zod";
 import { envSchema } from "./env.schema.js";
 import { createAppConfig } from "./app.env.js";
 import { createDatabaseConfig } from "./database.env.js";
+import { createJwtConfig } from "./jwt.env.js";
 
 /**
  * Validate environment variables using the Zod schema.
@@ -29,4 +30,6 @@ const env = parsedEnv.data;
 export const envConfig = Object.freeze({
     app: createAppConfig(env),
     database: createDatabaseConfig(env),
+    jwt: createJwtConfig(env),
 });
+

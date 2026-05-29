@@ -4,6 +4,12 @@
     // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
+    // Configure path aliases for absolute imports like "@/..."
+    // install tsconfig-paths
+    // very important
+    "paths": {
+      "@/*":["./src/*"],
+    },
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
