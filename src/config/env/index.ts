@@ -4,6 +4,7 @@ import { envSchema } from "./env.schema.js";
 import { createAppConfig } from "./app.env.js";
 import { createDatabaseConfig } from "./database.env.js";
 import { createJwtConfig } from "./jwt.env.js";
+import { createRedisConfig } from "./redis.env.js";
 
 /**
  * Validate environment variables using the Zod schema.
@@ -31,5 +32,6 @@ export const envConfig = Object.freeze({
     app: createAppConfig(env),
     database: createDatabaseConfig(env),
     jwt: createJwtConfig(env),
+    redis: createRedisConfig(env),
 });
 
