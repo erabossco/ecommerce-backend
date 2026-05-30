@@ -14,7 +14,7 @@ type verifyTokenParams = {
  * @returns decoded payload if token is valid
  */
 
-export const vefiryToken = ({ token, type }: verifyTokenParams): JwtPayload => {
+export const verifyToken = ({ token, type }: verifyTokenParams): JwtPayload => {
     let secret: string;
 
     switch (type) {
