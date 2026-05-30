@@ -9,6 +9,7 @@ import { createMailConfig } from "./mail.env.js";
 import { createStorageConfig } from "./storage.env.js";
 import { createPaymentConfig } from "./payment.env.js";
 import { createQueueConfig } from "./queue.env.js";
+import { createFeatureConfig } from "./feature.env.js";
 
 /**
  * Validate environment variables using the Zod schema.
@@ -41,5 +42,5 @@ export const envConfig = Object.freeze({
     storage: createStorageConfig(env),
     payment: createPaymentConfig(env),
     queue: createQueueConfig(env),
+    feature: createFeatureConfig(env),
 });
-

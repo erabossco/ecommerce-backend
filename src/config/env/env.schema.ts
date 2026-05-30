@@ -67,6 +67,13 @@ export const envSchema = z.object({
     SSLCOMMERZ_STORE_ID: z.string(),
     SSLCOMMERZ_STORE_PASSWORD: z.string(),
 
+    // Feature
+    FEATURE_SHOP_OPEN: z.coerce.boolean().default(true),
+    FEATURE_REGISTRATION: z.coerce.boolean().default(true),
+    FEATURE_COUPONS: z.coerce.boolean().default(true),
+    FEATURE_PROMOTION: z.coerce.boolean().default(true),
+    FEATURE_PRODUCT_CREATION: z.coerce.boolean().default(true),
+
 });
 
 export type EnvSchemaType = z.infer<typeof envSchema>
