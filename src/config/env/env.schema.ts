@@ -17,14 +17,23 @@ export const envSchema = z.object({
 
     // JWT auth config
     JWT_ACCESS_SECRET: z.string().min(10),
-    JWT_ACCESS_EXPIRES_IN: z.string(),
     JWT_REFRESH_SECRET: z.string().min(10),
-    JWT_REFRESH_EXPIRES_IN: z.string(),
+    JWT_ACCESS_EXPIRES_IN: z.string().min(1),
+    JWT_REFRESH_EXPIRES_IN: z.string().min(1),
+
+    // Bcrypt config
+    BCRYPT_SALT_ROUNDS: z.coerce.number().min(10).max(15),
+
+    // Auth config
+    RESET_PASSWORD_EXPIRES_IN: z.string().min(1),
+    VERIFY_EMAIL_EXPIRES_IN: z.string().min(1),
+    MAX_SESSION_PER_USER: z.coerce.number().min(1).max(20),
+    SESSION_EXPIRY_DAYS: z.coerce.number().min(1).max(90),
 
     // Redis cache config
     REDIS_HOST: z.string().min(1),
     REDIS_PORT: z.coerce.number().default(6379),
-    REDIS_PASSWORD: z.string().optional().or(z.literal("")),
+    REDIS_PASSWORD: z.string().optional(),
 
     // Queue redis config
     QUEUE_REDIS_HOST: z.string(),

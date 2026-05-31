@@ -10,6 +10,9 @@ import { createStorageConfig } from "./storage.env.js";
 import { createPaymentConfig } from "./payment.env.js";
 import { createQueueConfig } from "./queue.env.js";
 import { createFeatureConfig } from "./feature.env.js";
+import { createBcryptConfig } from "./bcrypt.env.js";
+import { createAuthConfig } from "./auth.env.js";
+
 
 /**
  * Validate environment variables using the Zod schema.
@@ -43,4 +46,6 @@ export const envConfig = Object.freeze({
     payment: createPaymentConfig(env),
     queue: createQueueConfig(env),
     feature: createFeatureConfig(env),
+    bcrypt: createBcryptConfig(env),
+    auth: createAuthConfig(env),
 });
