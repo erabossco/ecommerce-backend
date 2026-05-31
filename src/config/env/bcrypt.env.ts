@@ -4,6 +4,6 @@ import type { EnvSchemaType } from "./env.schema.js"
 
 export const createBcryptConfig = (env: EnvSchemaType) => {
     return {
-        salt: env.BCRYPT_SALT_ROUNDS,
+        saltRounds: env.BCRYPT_SALT_ROUNDS,
     };
 }

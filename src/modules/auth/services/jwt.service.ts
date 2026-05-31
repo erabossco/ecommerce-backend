@@ -2,7 +2,6 @@ import { generateToken, verifyToken } from "../utils/index.js";
 import type { JwtPayload } from "../types/auth.types.js";
 
 
-
 class JwtService {
     // Generate access token
     generateAccessToken(payload: JwtPayload) {
@@ -26,4 +25,3 @@ class JwtService {
 }
 
 export const jwtService = new JwtService();
-
