@@ -3,20 +3,10 @@
 // ====================
 
 /**
- * Token lifetime in seconds
- */
-export const TOKEN_EXPIRY = {
-    ACCESS_TOKEN: 15 * 60,
-    REFRESH_TOKEN: 7 * 24 * 60 * 60,
-    RESET_PASSWORD_TOKEN: 10 * 60,
-    VERIFY_EMAIL_TOKEN: 30 * 60,
-} as const;
-
-/**
  * Cookie names used in Auth system
  */
 
-export const AUTH_KOOKIE_KEY = {
+export const AUTH_COOKIE_KEY = {
     ACCESS_TOKEN: "access_token",
     REFRESH_TOKEN: "refresh_token",
 } as const;
@@ -32,43 +22,12 @@ export const TOKEN_TYPE = {
 } as const;
 
 /**
- * Supported Auth providers based on Prisma AuthProvider enum
- */
-
-export const AUTH_PROVIDER = {
-    EMAIL: "EMAIL",
-    GOOGLE: "GOOGLE",
-    FACEBOOK: "FACEBOOK",
-} as const;
-
-
-/**
- * User roles based on Prisma Role enum
- */
-
-export const USER_ROLE = {
-    USER: "USER",
-    ADMIN: "ADMIN",
-    STAFF: "STAFF",
-} as const;
-
-/**
- * Default session config
- */
-
-export const SESSION_CONFIG = {
-    MAX_SESSIONS_PER_USER: 5,
-    SESSION_EXPIRY_DAYS: 30,
-} as const;
-
-/**
- * Securit rules
+ * Password rules
  */
 
 export const SECURITY = {
-    PASSWORD_MIN_LENGHT: 8,
-    PASSWORD_MAX_LENGHT: 40,
-    BCRYPT_SALT_ROUNDS: 10,
+    PASSWORD_MIN_LENGTH: 8,
+    PASSWORD_MAX_LENGTH: 32,
 } as const;
 
 /**
@@ -81,7 +40,7 @@ export const AUTH_MESSAGES = {
     LOGOUT_SUCCESS: "Logout successful",
 
     INVALID_CREDENTIALS: "Invalid email or password",
-    UNAUTHORIZED: "Unauthoriszd access",
+    UNAUTHORIZED: "Unauthorized access",
     FORBIDDEN: "Forbidden access",
 
     TOKEN_EXPIRED: "Token has expired",
