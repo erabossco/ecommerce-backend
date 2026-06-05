@@ -11,7 +11,8 @@ import { TOKEN_TYPE } from "../constants/auth.constants.js";
  */
 type GenerateTokenParams = {
     payload: JwtPayload;
-    type: keyof typeof TOKEN_TYPE;
+    secret: string
+    expiresIn: SignOptions["expiresIn"]
 }
 
 /**
@@ -23,25 +24,28 @@ type GenerateTokenParams = {
  * @throw error for invalid token type 
  * Use jwt.sign(payload, secret, options) to create the token
  */
-export const generateToken = ({ payload, type }: GenerateTokenParams): string => {
-    let secret: string;
-    let expiresIn: SignOptions["expiresIn"];
+// export const generateToken = ({ payload, type }: GenerateTokenParams): string => {
+//     let secret: string;
+//     let expiresIn: SignOptions["expiresIn"];
 
-    switch (type) {
-        case "ACCESS":
-            secret = envConfig.jwt.access.secret;
-            expiresIn = envConfig.jwt.access.expiresIn as ms.StringValue;
-            break;
+//     switch (type) {
+//         case "ACCESS":
+//             secret = envConfig.jwt.access.secret;
+//             expiresIn = envConfig.jwt.access.expiresIn;
+//             break;
 
-        case "REFRESH":
-            secret = envConfig.jwt.refresh.secret;
-            expiresIn = envConfig.jwt.refresh.expiresIn as ms.StringValue;
-            break;
+//         case "REFRESH":
+//             secret = envConfig.jwt.refresh.secret;
+//             expiresIn = envConfig.jwt.refresh.expiresIn;
+//             break;
 
-        default:
-            throw new Error("Invalid token type");
-    }
+//         default:
+//             throw new Error("Invalid token type");
+//     }
 
-    return jwt.sign(payload, secret, { expiresIn });
-}
+//     return jwt.sign(payload, secret, { expiresIn });
+// }
 
+export const generateToken = ({ payload, secret, expiresIn }: GenerateTokenParams): string => {
+    return jwt.sign(payload, secret, { expiresIn: expiresIn as ms.StringValue });
+};

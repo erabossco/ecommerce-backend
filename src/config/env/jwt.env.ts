@@ -1,4 +1,5 @@
 import type { EnvSchemaType } from "./env.schema.js";
+import ms from "ms";
 
 
 /**
@@ -12,11 +13,11 @@ export const createJwtConfig = (env: EnvSchemaType) => {
     return {
         access: {
             secret: env.JWT_ACCESS_SECRET,
-            expiresIn: env.JWT_ACCESS_EXPIRES_IN,
+            expiresIn: env.JWT_ACCESS_EXPIRES_IN as ms.StringValue,
         },
         refresh: {
             secret: env.JWT_REFRESH_SECRET,
-            expiresIn: env.JWT_REFRESH_EXPIRES_IN,
+            expiresIn: env.JWT_REFRESH_EXPIRES_IN as ms.StringValue,
         },
         options: {
             issuer: env.APP_NAME,

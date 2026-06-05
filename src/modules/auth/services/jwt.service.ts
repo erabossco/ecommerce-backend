@@ -1,26 +1,39 @@
 import { generateToken, verifyToken } from "../utils/index.js";
 import type { JwtPayload } from "../types/auth.types.js";
+import { envConfig } from "@/config/env/index.js";
 
 
 class JwtService {
     // Generate access token
     generateAccessToken(payload: JwtPayload) {
-        return generateToken({ payload, type: "ACCESS" });
+        return generateToken({ payload, secret: envConfig.jwt.access.secret, expiresIn: envConfig.jwt.access.expiresIn });
     }
 
-    // Generate refresh token
+    // // Generate refresh token
+    // generateRefreshToken(payload: JwtPayload) {
+    //     return generateToken({ payload, type: "REFRESH" });
+    // }
+
     generateRefreshToken(payload: JwtPayload) {
-        return generateToken({ payload, type: "REFRESH" });
+        return generateToken({ payload, secret: envConfig.jwt.refresh.secret, expiresIn: envConfig.jwt.refresh.expiresIn });
     }
 
-    // Verify access token
+    // // Verify access token
+    // verifyAccessToken(token: string): JwtPayload {
+    //     return verifyToken({ token, type: "ACCESS" });
+    // }
+
     verifyAccessToken(token: string): JwtPayload {
-        return verifyToken({ token, type: "ACCESS" });
+        return verifyToken(token, envConfig.jwt.access.secret)
     }
 
-    // Verify refresh token
+    // // Verify refresh token
+    // verifyRefreshToken(token: string): JwtPayload {
+    //     return verifyToken({ token, type: "REFRESH" });
+    // }
+
     verifyRefreshToken(token: string): JwtPayload {
-        return verifyToken({ token, type: "REFRESH" });
+        return verifyToken(token, envConfig.jwt.refresh.secret)
     }
 }
 
