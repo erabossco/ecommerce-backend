@@ -193,3 +193,13 @@ export type OAuthProfile = {
     lastName?: string;
     avatar?: string;
 }
+
+// =====================
+// CreateSession Params
+// =====================
+export type CreateSessionParams = {
+    userId: string;
+    userAgent?: string;
+    ipAddress?: string;
+    expiresAt?: Date;
+};

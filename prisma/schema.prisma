@@ -67,6 +67,8 @@ model Session {
   userAgent String?
   ipAddress String?
 
+  RefreshToken String?
+
   isActive Boolean @default(true)
 
   expiresAt DateTime?
