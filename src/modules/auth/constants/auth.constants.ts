@@ -28,6 +28,7 @@ export const TOKEN_TYPE = {
 export const SECURITY = {
     PASSWORD_MIN_LENGTH: 8,
     PASSWORD_MAX_LENGTH: 32,
+    BCRYPT_SALT_ROUNDS: 10,
 } as const;
 
 /**

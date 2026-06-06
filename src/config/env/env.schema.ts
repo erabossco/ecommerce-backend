@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-
 // =============================
 // ENVIRONMENT SCHEMA VALIDATION
 // =============================
@@ -18,8 +17,8 @@ export const envSchema = z.object({
     // JWT auth config
     JWT_ACCESS_SECRET: z.string().min(10),
     JWT_REFRESH_SECRET: z.string().min(10),
-    JWT_ACCESS_EXPIRES_IN: z.string().min(1),
-    JWT_REFRESH_EXPIRES_IN: z.string().min(1),
+    JWT_ACCESS_EXPIRES_IN: z.string().trim().regex(/^\d+[smhd]$/),
+    JWT_REFRESH_EXPIRES_IN: z.string().trim().regex(/^\d+[smhd]$/),
 
     // Bcrypt config
     BCRYPT_SALT_ROUNDS: z.coerce.number().min(10).max(15),

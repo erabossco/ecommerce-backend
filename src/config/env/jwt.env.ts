@@ -25,4 +25,3 @@ export const createJwtConfig = (env: EnvSchemaType) => {
         },
     };
 }
-
