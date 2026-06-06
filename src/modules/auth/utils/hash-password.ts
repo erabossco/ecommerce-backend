@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { SECURITY } from "../constants/auth.constants.js";
+import { envConfig } from "@/config/env/index.js";
 
 /**
  * Hashes a plain password using bcrypt
@@ -9,5 +9,5 @@ import { SECURITY } from "../constants/auth.constants.js";
  */
 
 export const hashPassword = async (plainPassword: string): Promise<string> => {
-    return bcrypt.hash(plainPassword, SECURITY.BCRYPT_SALT_ROUNDS);
+    return bcrypt.hash(plainPassword, envConfig.bcrypt.saltRounds);
 }
