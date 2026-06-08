@@ -203,3 +203,13 @@ export type CreateSessionParams = {
     ipAddress?: string;
     expiresAt?: Date;
 };
+
+// ===========================
+// CreateRefreshToken Params
+// ===========================
+
+export type CreateRefreshTokenParams = {
+    userId: string;
+    tokenHash: string;
+    expiresAt: Date;
+};

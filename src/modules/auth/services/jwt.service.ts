@@ -4,13 +4,13 @@ import { envConfig } from "@/config/env/index.js";
 
 class JwtService {
     // Generate access token
-    generateAccessToken(payload: JwtPayload) {
+    generateAccessToken(payload: JwtPayload): string {
         return generateToken({ payload, secret: envConfig.jwt.access.secret, expiresIn: envConfig.jwt.access.expiresIn });
     }
 
     // Generate refresh token
 
-    generateRefreshToken(payload: JwtPayload) {
+    generateRefreshToken(payload: JwtPayload): string {
         return generateToken({ payload, secret: envConfig.jwt.refresh.secret, expiresIn: envConfig.jwt.refresh.expiresIn });
     }
 
