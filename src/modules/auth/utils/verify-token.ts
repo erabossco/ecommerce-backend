@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "../types/auth.types.js";
+import { UnauthorizedError } from "@/shared/errors/unauthorized.error.js";
 
 /**
  * Verify JWT token
@@ -11,5 +12,9 @@ import type { JwtPayload } from "../types/auth.types.js";
  */
 
 export const verifyToken = (token: string, secret: string): JwtPayload => {
-    return jwt.verify(token, secret) as JwtPayload;
+    try {
+        return jwt.verify(token, secret) as JwtPayload;
+    } catch {
+        throw new UnauthorizedError("Invalid or expired token")
+    }
 }
