@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "../types/auth.types.js";
-import { UnauthorizedError } from "@/shared/errors/unauthorized.error.js";
+import { UnauthorizedError } from "@/shared/errors/index.js";
 
 /**
  * Verify JWT token

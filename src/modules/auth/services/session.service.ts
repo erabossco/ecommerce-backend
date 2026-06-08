@@ -6,7 +6,7 @@ import { envConfig } from '@/config/env/index.js';
 const connectionString = envConfig.database.url;
 const adapter = new PrismaPg({ connectionString });
 const prisma = new PrismaClient({ adapter });
-import type { CreateSessionParams } from '../types/auth.types.js';
+import type { CreateSessionParams } from '../types/index.js';
 
 // ==========================================
 //  SESSION STORED IN AND LOAD FROM DATABASE

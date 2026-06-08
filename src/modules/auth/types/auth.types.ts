@@ -11,6 +11,11 @@ export type RegisterUserPayload = {
     password: string;
 }
 
+export type RegisterContext = {
+    userAgent?: string;
+    ipAddress?: string;
+};
+
 // =================
 //    LOGIN
 // =================
@@ -19,6 +24,12 @@ export type LoginUserPayload = {
     email: string;
     password: string;
 }
+
+export type LoginContext = {
+    userAgent?: string;
+    ipAddress?: string;
+};
+
 
 // ==============
 // REFRESH TOKEN
@@ -73,6 +84,12 @@ export type JwtPayload = {
     sessionId: string;
 }
 
+// ====================
+// REQUEST USER
+// ====================
+
+export type RequestUser = JwtPayload;
+
 // ==========================
 //  AUTH TOKEN
 // ==========================
@@ -93,7 +110,7 @@ export type AuthUser = {
     role: Role;
     provider: AuthProvider;
 
-    isVerifiedEmail: boolean;
+    isEmailVerified: boolean;
     isActive: boolean;
     isDeleted: boolean;
 
@@ -112,45 +129,20 @@ export type AuthResponse = {
     tokens: AuthTokens;
 }
 
-// ====================
-// REQUEST USER
-// ====================
-
-export type RequestUser = {
-    userId: string;
-    email: string;
-    role: Role;
-}
-
-// ================
-// TOKEN TYPES (UNION TYPE)
-// ================
-
-export type TokenType =
-    | "ACCESS_TOKEN"
-    | "REFRESH_TOKEN"
-    | "RESET_PASSWORD_TOKEN"
-    | "VERIFY_EMAIL_TOKEN";
-
-// ===================
-// AUTH PROVIDER TYPE
-// ===================
-
-export type AuthProviderType =
-    | "GOOGLE"
-    | "FACEBOOK"
-    | "EMAIL";
-
 // ======================
 // AUTH COOKIE OPTIONS
 // ======================
 
-export type AuthCookeOptions = {
+export type AuthCookieOptions = {
     httpOnly: boolean;
     secure: boolean;
     sameSite: "strict" | "lax" | "none";
     expires: Date;
 }
+
+export type AccessCookieOptions = AuthCookieOptions & { maxAge: number };
+
+export type RefreshCookieOptions = AuthCookieOptions & { maxAge: number };
 
 // ========================
 // EMAIL TEMPLATES
@@ -160,26 +152,6 @@ export type AuthEmailTemplateData = {
     firstName: string;
     verificationLink?: string;
     resetPasswordLink?: string;
-}
-
-// ================
-// LOGIN RESULT
-// ================
-
-export type LoginResult = {
-    user: AuthUser;
-    accessToken: string;
-    refreshToken: string;
-}
-
-// ====================
-// REGISTER RESULT
-// ====================
-
-export type RegisterResult = {
-    user: AuthUser;
-    accessToken: string;
-    refreshToken: string;
 }
 
 // =================
@@ -194,15 +166,6 @@ export type OAuthProfile = {
     avatar?: string;
 }
 
-// =====================
-// CreateSession Params
-// =====================
-export type CreateSessionParams = {
-    userId: string;
-    userAgent?: string;
-    ipAddress?: string;
-    expiresAt?: Date;
-};
 
 // ===========================
 // CreateRefreshToken Params
