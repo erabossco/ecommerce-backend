@@ -123,6 +123,25 @@ class SessionService {
             },
         });
     }
+
+
+    /**
+     * Logout other devices but not the current one
+     */
+
+    async revokeOtherSessions(userId: string, currentSessionId: string) {
+        return prisma.session.updateMany({
+            where: {
+                userId,
+                id: {
+                    not: currentSessionId,
+                },
+            },
+            data: {
+                isActive: false,
+            },
+        });
+    }
 }
 
 export const sessionService = new SessionService();
