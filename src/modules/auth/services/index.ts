@@ -1,3 +1,4 @@
-export * from "./jwt.service.js";
-export * from "./password.service.js";
-export * from "./session.service.js";
+export { jwtService } from "./jwt.service.js";
+export { passwordService } from "./password.service.js";
+export { sessionService } from "./session.service.js";
+export { refreshTokenService } from "./refresh-token.service.js";
