@@ -2,6 +2,8 @@ import { prisma } from "@/infrastructure/database/prisma/index.js";
 import { jwtService } from "./jwt.service.js";
 import { hashToken } from "@/shared/utils/index.js";
 import type { JwtPayload } from "../types/index.js";
+import ms from "ms";
+import { envConfig } from "@/config/env/index.js";
 
 /**
  * Refresh Token Service
@@ -11,11 +13,13 @@ class RefreshTokenService {
     /**
      * Create refresh token and store hashed version in database
      */
-    async createRefreshToken(payload: JwtPayload, expiresAt: Date) {
+    async createRefreshToken(payload: JwtPayload) {
 
         const refreshToken = jwtService.generateRefreshToken(payload);
-
         const tokenHash = hashToken(refreshToken);
+        const expiresAt = new Date(
+            Date.now() + ms(envConfig.jwt.refresh.expiresIn)
+        );
 
         await prisma.refreshToken.create({
             data: {
@@ -62,7 +66,7 @@ class RefreshTokenService {
     /**
      * Rotate refresh token (logout old token and issue new one)
      */
-    async rotateRefreshToken(oldToken: string, expiresAt: Date) {
+    async rotateRefreshToken(oldToken: string) {
         const decoded = await this.verifyRefreshToken(oldToken);
 
         // Revoke all active tokens for user
@@ -77,7 +81,7 @@ class RefreshTokenService {
         });
 
         // Issue a new token
-        return this.createRefreshToken(decoded, expiresAt);
+        return this.createRefreshToken(decoded);
     }
 
     /**
