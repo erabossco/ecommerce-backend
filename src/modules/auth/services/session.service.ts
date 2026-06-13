@@ -20,7 +20,7 @@ class SessionService {
                 userId,
                 userAgent: userAgent ?? null,
                 ipAddress: ipAddress ?? null,
-                expiresAt: expiresAt ?? null,
+                expiresAt,
                 isActive: true,
             },
         });
@@ -55,13 +55,16 @@ class SessionService {
     /**
      * Revoke a single session (logout from one device)
      */
-    async revokeSession(sessionId: string) {
-        return prisma.session.update({
+    async revokeCurrentSession(sessionId: string) {
+        return prisma.session.updateMany({
             where: {
                 id: sessionId,
+                isActive: true,
+                revokedAt: null,
             },
             data: {
                 isActive: false,
+                revokedAt: new Date(),
             },
         });
     }
@@ -74,9 +77,11 @@ class SessionService {
             where: {
                 userId,
                 isActive: true,
+                revokedAt: null,
             },
             data: {
                 isActive: false,
+                revokedAt: new Date(),
             },
         });
     }
@@ -86,13 +91,24 @@ class SessionService {
      */
     async isSessionValid(sessionId: string): Promise<boolean> {
         const session = await prisma.session.findUnique({
-            where: { id: sessionId },
+            where: {
+                id: sessionId,
+            },
         });
 
-        if (!session) return false;
-        if (!session.isActive) return false;
+        if (!session) {
+            return false;
+        }
 
-        if (session.expiresAt && session.expiresAt < new Date()) {
+        if (!session.isActive) {
+            return false;
+        }
+
+        if (session.revokedAt) {
+            return false;
+        }
+
+        if (session.expiresAt < new Date()) {
             return false;
         }
 
@@ -107,9 +123,14 @@ class SessionService {
             where: {
                 userId,
                 isActive: true,
+                revokedAt: null,
+                expiresAt: {
+                    gt: new Date(),
+                },
             },
         });
     }
+
 
     /**
      * Delete expired sessions (cleanup job use-case)
@@ -139,6 +160,7 @@ class SessionService {
             },
             data: {
                 isActive: false,
+                revokedAt: new Date(),
             },
         });
     }

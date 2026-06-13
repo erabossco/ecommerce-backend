@@ -52,8 +52,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessions      Session[]
-  refreshTokens RefreshToken[]
+  sessions Session[]
 
   @@index([email])
   @@index([role])
@@ -62,19 +61,21 @@ model User {
 model Session {
   id     String @id @default(cuid())
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   userAgent String?
   ipAddress String?
 
-  RefreshToken String?
+  isActive  Boolean   @default(true)
+  revokedAt DateTime?
 
-  isActive Boolean @default(true)
-
-  expiresAt DateTime?
+  expiresAt DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  refreshTokens RefreshToken[]
 
   @@index([userId])
 }
@@ -82,8 +83,8 @@ model Session {
 model RefreshToken {
   id String @id @default(cuid())
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   tokenHash String @unique
 
@@ -92,5 +93,5 @@ model RefreshToken {
 
   createdAt DateTime @default(now())
 
-  @@index([userId])
+  @@index([sessionId])
 }

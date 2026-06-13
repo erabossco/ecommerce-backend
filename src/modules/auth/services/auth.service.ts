@@ -14,6 +14,8 @@ import type {
     RegisterUserPayload
 } from "../types/auth.types.js";
 import { refreshTokenService } from "./refresh-token.service.js";
+import { envConfig } from "@/config/env/index.js";
+import ms from "ms";
 
 
 class AuthService {
@@ -55,12 +57,15 @@ class AuthService {
             }
         });
 
+        const sessionExpiresAt = new Date(Date.now() + ms(envConfig.jwt.refresh.expiresIn));
+
         // Create session and store it in database
         // (the sessionService in another file) is handling prisma actions
         const session = await sessionService.createSession({
             userId: user.id,
             ...(context.userAgent && { userAgent: context.userAgent }),
             ...(context.ipAddress && { ipAddress: context.ipAddress }),
+            expiresAt: sessionExpiresAt,
         });
 
 
@@ -138,11 +143,13 @@ class AuthService {
             throw new Error("Account disabled");
         }
 
+        const sessionExpiresAt = new Date(Date.now() + ms(envConfig.jwt.refresh.expiresIn));
         // Create a session with the login data
         const session = await sessionService.createSession({
             userId: user.id,
             ...(context.userAgent && { userAgent: context.userAgent }),
             ...(context.userAgent && { ipAddress: context.ipAddress }),
+            expiresAt: sessionExpiresAt,
         });
 
         // Generate access and refresh token
@@ -196,14 +203,39 @@ class AuthService {
     // LOGOUT CURRENT DEVICE
     // ========================
 
+    /**
+     * Revoke the current session in the database
+     * This will logout the current device
+     * @param sessionId (current session id)
+     * @returns logout confirmation
+     */
+
     async logout(sessionId: string): Promise<LogoutResponse> {
-        // Revoke the current session in the database
-        // This will logout the current device
-        await sessionService.revokeSession(sessionId);
+
+        await sessionService.revokeCurrentSession(sessionId);
         // Confirm the client that logout is successful
         return { success: true };
-    }
+    };
 
+    // ====================
+    // LOGOUT ALL DEVICES
+    // ====================
+
+
+    /**
+     * Revoke all the sessions in the database
+     * This will logout all devices
+     * @param userId 
+     * @returns logout confirmation
+     */
+
+    async logoutAllDevices(userId: string): Promise<LogoutResponse> {
+        await sessionService.revokeAllUserSessions(userId);
+
+        return {
+            success: true
+        };
+    }
 }
 
 export const authService = new AuthService();
