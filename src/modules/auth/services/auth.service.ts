@@ -7,9 +7,11 @@ import type {
     JwtPayload,
     LoginContext,
     LoginUserPayload,
+    RefreshTokenPayload,
     RegisterContext,
     RegisterUserPayload
 } from "../types/auth.types.js";
+import { refreshTokenService } from "./refresh-token.service.js";
 
 
 class AuthService {
@@ -159,7 +161,35 @@ class AuthService {
                 refreshToken,
             }
         };
+    };
+
+    // ===========================================
+    // REFRESH ACCESS TOKEN & ROTATE REFRESH TOKEN
+    // ===========================================
+
+    /**
+     * Validates the refresh token and associated session,
+     * then generates a new access token and rotates the refresh token.
+     *
+     * @param payload Contains the current refresh token.
+     * @returns A new access token and refresh token pair.
+     */
+
+    async refreshToken(payload: RefreshTokenPayload) {
+
+        const decoded = await refreshTokenService.verifyRefreshToken(payload.refreshToken);
+        const isSessionValid = await sessionService.isSessionValid(decoded.sessionId);
+
+        if (!isSessionValid) {
+            throw new Error("Session expired");
+        }
+
+        const accessToken = jwtService.generateAccessToken(decoded);
+        const refreshToken = await refreshTokenService.rotateRefreshToken(payload.refreshToken);
+
+        return { accessToken, refreshToken };
     }
+
 }
 
 export const authService = new AuthService();
