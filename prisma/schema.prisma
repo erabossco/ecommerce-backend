@@ -67,9 +67,7 @@ model Session {
   userAgent String?
   ipAddress String?
 
-  isActive  Boolean   @default(true)
   revokedAt DateTime?
-
   expiresAt DateTime
 
   createdAt DateTime @default(now())
@@ -78,6 +76,8 @@ model Session {
   refreshTokens RefreshToken[]
 
   @@index([userId])
+  @@index([revokedAt])
+  @@index([expiresAt])
 }
 
 model RefreshToken {
@@ -94,4 +94,5 @@ model RefreshToken {
   createdAt DateTime @default(now())
 
   @@index([sessionId])
+  @@index([revokedAt])
 }

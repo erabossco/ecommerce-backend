@@ -13,17 +13,19 @@ class RefreshTokenService {
     /**
      * Create refresh token and store hashed version in database
      */
-    async createRefreshToken(payload: JwtPayload, sessionId: string) {
+    async createRefreshToken(payload: JwtPayload) {
 
         const refreshToken = jwtService.generateRefreshToken(payload);
         const tokenHash = hashToken(refreshToken);
+
         const expiresAt = new Date(
             Date.now() + ms(envConfig.jwt.refresh.expiresIn)
         );
 
         await prisma.refreshToken.create({
             data: {
-                sessionId,
+                userId: payload.userId,
+                sessionId: payload.sessionId,
                 tokenHash,
                 expiresAt,
             },
@@ -36,13 +38,10 @@ class RefreshTokenService {
      * Verify refresh token (JWT and DB check)
      */
     async verifyRefreshToken(token: string) {
-        // Verify JWT signature
         const decoded = jwtService.verifyRefreshToken(token);
 
-        // Hash incoming token
         const tokenHash = hashToken(token);
 
-        // Find token in DB
         const storedToken = await prisma.refreshToken.findFirst({
             where: {
                 tokenHash,
@@ -56,12 +55,11 @@ class RefreshTokenService {
         if (!storedToken) {
             throw new Error("Invalid refresh token");
         }
-        // Check session expiry 
-        // Session is the single source of truth 
-        if (!storedToken.session.isActive || storedToken.session.revokedAt) {
+
+        if (!storedToken.session.revokedAt) {
             throw new Error("Session expired");
         }
-        // Check token expiry
+
         if (storedToken.expiresAt < new Date()) {
             throw new Error("Refresh token expired");
         }
@@ -74,9 +72,9 @@ class RefreshTokenService {
      */
     async rotateRefreshToken(oldToken: string) {
         const decoded = await this.verifyRefreshToken(oldToken);
+
         const oldTokenHash = hashToken(oldToken);
 
-        // Revoke this token
         await prisma.refreshToken.updateMany({
             where: {
                 tokenHash: oldTokenHash,
@@ -87,30 +85,13 @@ class RefreshTokenService {
             },
         });
 
-        // Create a new token for the same session
-        return this.createRefreshToken(decoded, decoded.sessionId);
-    }
-
-    /**
-     * Revoke all refresh tokens of a user (logout all devices)
-     */
-    async revokeAllUserTokens(sessionId: string) {
-        await prisma.refreshToken.updateMany({
-            where: {
-                sessionId,
-                revokedAt: null,
-            },
-            data: {
-                revokedAt: new Date(),
-            },
-        });
+        return this.createRefreshToken(decoded);
     }
 
     /**
      * Revoke all refresh tokens of a session
      */
     async revokeSessionTokens(sessionId: string) {
-
         await prisma.refreshToken.updateMany({
             where: {
                 sessionId,

@@ -175,6 +175,24 @@ export type OAuthProfile = {
     avatar?: string;
 }
 
+// =================
+// AUTH PROFILE
+// ================= 
+
+export type CurrentUserProfile = {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+
+    avatar: string | null;
+
+    role: Role;
+    isEmailVerified: boolean;
+
+    createdAt: Date;
+};
+
 
 // ===========================
 // CreateRefreshToken Params
