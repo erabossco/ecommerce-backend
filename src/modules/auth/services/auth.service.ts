@@ -4,6 +4,7 @@ import { jwtService } from "./jwt.service.js";
 import { sessionService } from "./session.service.js";
 import type {
     AuthResponse,
+    AuthTokens,
     JwtPayload,
     LoginContext,
     LoginUserPayload,
@@ -175,7 +176,7 @@ class AuthService {
      * @returns A new access token and refresh token pair.
      */
 
-    async refreshToken(payload: RefreshTokenPayload) {
+    async refreshToken(payload: RefreshTokenPayload): Promise<AuthTokens> {
 
         const decoded = await refreshTokenService.verifyRefreshToken(payload.refreshToken);
         const isSessionValid = await sessionService.isSessionValid(decoded.sessionId);
