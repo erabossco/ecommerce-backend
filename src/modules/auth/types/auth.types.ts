@@ -30,6 +30,15 @@ export type LoginContext = {
     ipAddress?: string;
 };
 
+// =============
+// LOGOUT
+// =============
+
+export type LogoutResponse = {
+    success: boolean;
+}
+
+
 
 // ==============
 // REFRESH TOKEN

@@ -8,6 +8,7 @@ import type {
     JwtPayload,
     LoginContext,
     LoginUserPayload,
+    LogoutResponse,
     RefreshTokenPayload,
     RegisterContext,
     RegisterUserPayload
@@ -189,6 +190,18 @@ class AuthService {
         const refreshToken = await refreshTokenService.rotateRefreshToken(payload.refreshToken);
 
         return { accessToken, refreshToken };
+    };
+
+    // ========================
+    // LOGOUT CURRENT DEVICE
+    // ========================
+
+    async logout(sessionId: string): Promise<LogoutResponse> {
+        // Revoke the current session in the database
+        // This will logout the current device
+        await sessionService.revokeSession(sessionId);
+        // Confirm the client that logout is successful
+        return { success: true };
     }
 
 }
