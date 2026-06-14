@@ -12,8 +12,8 @@ export type RegisterUserPayload = {
 }
 
 export type RegisterContext = {
-    userAgent?: string;
-    ipAddress?: string;
+    userAgent?: string | undefined;
+    ipAddress?: string | undefined;
 };
 
 // =================
@@ -26,8 +26,8 @@ export type LoginUserPayload = {
 }
 
 export type LoginContext = {
-    userAgent?: string;
-    ipAddress?: string;
+    userAgent?: string | undefined;
+    ipAddress?: string | undefined;
 };
 
 // =============
