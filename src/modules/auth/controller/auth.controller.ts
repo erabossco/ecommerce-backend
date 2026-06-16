@@ -1,4 +1,4 @@
-import type { Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import type { AuthRequest } from "@/shared/types/express.types.js";
 import { authService } from "../services/auth.service.js";
 
@@ -17,7 +17,7 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    async register(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    async register(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const result = await authService.registerUser(
                 req.body,
@@ -46,7 +46,7 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    async login(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    async login(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const result = await authService.loginUser(
                 req.body,
@@ -77,7 +77,7 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    async refreshToken(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const refreshToken = req.cookies?.refreshToken;
             if (!refreshToken) {
@@ -111,9 +111,10 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    async logout(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const sessionId = req.user.sessionId;
+            const authReq = req as AuthRequest;
+            const sessionId = authReq.user.sessionId;
             const result = await authService.logout(sessionId);
             res.status(200).json({
                 success: true,
@@ -138,9 +139,10 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    async logoutAll(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    async logoutAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = req.user.userId;
+            const authReq = req as AuthRequest;
+            const userId = authReq.user.userId;
             const result = await authService.logoutAllDevices(userId);
             res.status(200).json({
                 success: true,
@@ -164,9 +166,10 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    async myProfile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    async myProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = req.user.userId;
+            const authReq = req as AuthRequest;
+            const userId = authReq.user.userId;
             const user = await authService.getCurrentUser(userId);
             res.status(200).json({
                 success: true,
