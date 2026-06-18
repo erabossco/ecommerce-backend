@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import helmetConfig from "./config/security/helmet.config.js";
 import corsConfig from "./config/security/cors.config.js";
 import rateLimitConfig from "./config/security/rate-limit.config.js";
+import { appRouter } from "./routes/index.js";
 
 // Express application instance
 const app = express();
@@ -53,6 +54,7 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 /**
  * Routes
  */
+app.use("/api/v1", appRouter);
 app.get("/", (req: Request, res: Response) => {
     res.send("Server is running.");
 });
