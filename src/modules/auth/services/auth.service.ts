@@ -66,9 +66,11 @@ class AuthService {
 
         const accessToken = jwtService.generateAccessToken(jwtPayload);
         const refreshToken = await refreshTokenService.createRefreshToken(jwtPayload);
+        // do not return passwordHash in response 
+        const { passwordHash: _, ...safeUserData } = user;
 
         return {
-            user,
+            user: safeUserData,
             tokens: { accessToken, refreshToken }
         };
     }
@@ -116,9 +118,11 @@ class AuthService {
 
         const accessToken = jwtService.generateAccessToken(jwtPayload);
         const refreshToken = await refreshTokenService.createRefreshToken(jwtPayload);
+        // do not return passwordHash in response 
+        const { passwordHash: _, ...safeUserData } = user;
 
         return {
-            user,
+            user: safeUserData,
             tokens: { accessToken, refreshToken }
         };
     }

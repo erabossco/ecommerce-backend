@@ -86,11 +86,28 @@ export type VerifyEmailPayload = {
 // JWT PAYLOAD
 // ==============
 
+// Application-specific data stored inside JWT.
+// This is what we need when generating new tokens.
+// But jsonwebtoken has more fileds name iat (issuedAt) and exp(expires) 
+// that conflict in service layer like expiresIn for this project codebase
+// So, in the next block we will make those two options optional 
+// and keep them out of response to avoid the confliction
 export type JwtPayload = {
     userId: string;
     email: string;
     role: Role;
     sessionId: string;
+}
+
+// JWT libraries automatically add standard fields like `iat` (issued at)
+// and `exp` (expiration time) when a token is created.
+// Decoded tokens contain these fields, but they should not be passed again
+// when generating a new token because jsonwebtoken will create new values.
+// This type is used only when reading/validating an existing JWT.
+// THIS IS IMPLEMENTED IN verifyRefreshToken at service layer
+export interface DecodedJwtPayload extends JwtPayload {
+    iat?: number;
+    exp?: number;
 }
 
 // ====================

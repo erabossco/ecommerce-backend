@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authController } from "../controllers/auth.controller.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -9,9 +10,9 @@ router.post("/login", authController.login);
 router.post("/refresh", authController.refreshToken);
 
 // Protected routes
-router.post("/logout", authController.logout);
-router.post("/logoutAll", authController.logoutAll);
-router.get("/profile", authController.myProfile);
+router.post("/logout", authenticate, authController.logout);
+router.post("/logoutAll", authenticate, authController.logoutAll);
+router.get("/profile", authenticate, authController.myProfile);
 
 
 export const authRoutes = router;

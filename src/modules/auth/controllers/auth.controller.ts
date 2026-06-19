@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import type { AuthRequest } from "@/shared/types/express.types.js";
 import { authService } from "../services/auth.service.js";
+import { cookieConfig } from "@/config/security/cookie.config.js";
 
 
 class AuthController {
@@ -23,6 +24,11 @@ class AuthController {
                 req.body,
                 { userAgent: req.get("user-agent"), ipAddress: req.ip }
             );
+
+            // set cookie
+            res.cookie("refreshToken", result.tokens.refreshToken, cookieConfig.refreshTokenCookieOptions);
+
+            // register response
             res.status(201).json({
                 success: true,
                 message: "Registration successful",
@@ -55,6 +61,10 @@ class AuthController {
                     ipAddress: req.ip,
                 }
             );
+            // set cookie
+            res.cookie("refreshToken", result.tokens.refreshToken, cookieConfig.refreshTokenCookieOptions);
+
+            // login response
             res.status(200).json({
                 success: true,
                 message: "Login successful",
@@ -88,7 +98,13 @@ class AuthController {
                 return;
             }
 
+
             const tokens = await authService.refreshToken({ refreshToken });
+
+            // set cookie
+            res.cookie("refreshToken", tokens.refreshToken, cookieConfig.refreshTokenCookieOptions);
+
+            // refresh response
             res.status(200).json({
                 success: true,
                 message: "Token refreshed successfully",
@@ -116,6 +132,11 @@ class AuthController {
             const authReq = req as AuthRequest;
             const sessionId = authReq.user.sessionId;
             const result = await authService.logout(sessionId);
+
+            // clear cookie
+            res.clearCookie("refreshToken", cookieConfig.clearCookieOptions);
+
+            // logout response
             res.status(200).json({
                 success: true,
                 message: "Logged out successfully",
@@ -144,6 +165,11 @@ class AuthController {
             const authReq = req as AuthRequest;
             const userId = authReq.user.userId;
             const result = await authService.logoutAllDevices(userId);
+
+            // clear all cookies
+            res.clearCookie("refreshToken", cookieConfig.clearCookieOptions);
+
+            // response for logout all devices
             res.status(200).json({
                 success: true,
                 message: "Logged out from all devices",

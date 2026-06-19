@@ -1,4 +1,5 @@
 import { envConfig } from "../env/index.js";
+import ms from "ms";
 
 
 /**
@@ -6,20 +7,20 @@ import { envConfig } from "../env/index.js";
  * Includes settings for accessToken, refreshToken and cookie clearing system
  */
 export const cookieConfig = {
-    accessToken: {
+    accessTokenCookieOptions: {
         httpOnly: true,
         secure: envConfig.app.isProduction,
         sameSite: "lax" as const,
         path: "/",
-        maxAge: envConfig.jwt.access.expiresIn,
+        maxAge: Number(ms(envConfig.jwt.access.expiresIn)),
     },
 
-    refreshToken: {
+    refreshTokenCookieOptions: {
         httpOnly: true,
         secure: envConfig.app.isProduction,
         sameSite: "lax" as const,
         path: "/",
-        maxAge: envConfig.jwt.refresh.expiresIn,
+        maxAge: Number(ms(envConfig.jwt.refresh.expiresIn)),
     },
 
     clearCookieOptions: {

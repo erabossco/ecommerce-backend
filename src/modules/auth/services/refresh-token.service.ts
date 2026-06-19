@@ -1,7 +1,7 @@
 import { prisma } from "@/infrastructure/database/prisma/index.js";
 import { jwtService } from "./jwt.service.js";
 import { hashToken } from "@/shared/utils/index.js";
-import type { JwtPayload } from "../types/index.js";
+import type { DecodedJwtPayload, JwtPayload } from "../types/index.js";
 import ms from "ms";
 import { envConfig } from "@/config/env/index.js";
 
@@ -24,7 +24,6 @@ class RefreshTokenService {
 
         await prisma.refreshToken.create({
             data: {
-                userId: payload.userId,
                 sessionId: payload.sessionId,
                 tokenHash,
                 expiresAt,
@@ -38,7 +37,7 @@ class RefreshTokenService {
      * Verify refresh token (JWT and DB check)
      */
     async verifyRefreshToken(token: string) {
-        const decoded = jwtService.verifyRefreshToken(token);
+        const decoded = jwtService.verifyRefreshToken(token) as DecodedJwtPayload;
 
         const tokenHash = hashToken(token);
 
@@ -56,15 +55,15 @@ class RefreshTokenService {
             throw new Error("Invalid refresh token");
         }
 
-        if (!storedToken.session.revokedAt) {
+        if (storedToken.session.revokedAt) {
             throw new Error("Session expired");
         }
 
         if (storedToken.expiresAt < new Date()) {
             throw new Error("Refresh token expired");
         }
-
-        return decoded;
+        const { iat, exp, ...payload } = decoded;
+        return payload;
     }
 
     /**

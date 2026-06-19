@@ -4,6 +4,7 @@ import helmetConfig from "./config/security/helmet.config.js";
 import corsConfig from "./config/security/cors.config.js";
 import rateLimitConfig from "./config/security/rate-limit.config.js";
 import { appRouter } from "./routes/index.js";
+import cookieParser from "cookie-parser";
 
 // Express application instance
 const app = express();
@@ -41,6 +42,11 @@ app.use(corsConfig);
  * credential stuffing, Distributed Denial-of-service (DDoS) attack  
 */
 app.use(rateLimitConfig);
+
+/**
+ * Cookie parse
+ */
+app.use(cookieParser());
 
 /**
  * Body parsers 
