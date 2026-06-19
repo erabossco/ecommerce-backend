@@ -18,7 +18,10 @@ describe("Auth API", () => {
         password: "Password123"
     };
 
-    // Test uer registeration flow
+    // ============================
+    // TEST USER REGISTRATION FLOW
+    // =============================
+
     it("should register a user", async () => {
         const response = await request(app)
             .post("/api/v1/auth/register")
@@ -33,6 +36,55 @@ describe("Auth API", () => {
         if (!cookies?.length) {
             throw new Error("Refresh token cookie not found");
         }
-        refreshTokenCookie = cookies[0]!;
+        refreshTokenCookie = cookies[0]!.split(";")[0]!;
     });
+
+    // ================
+    // TEST USER LOGIN
+    // ================
+
+    it("should login user", async () => {
+        const response = await request(app)
+            .post("/api/v1/auth/login")
+            .send({
+                email: testUser.email,
+                password: testUser.password,
+            });
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.tokens.accessToken).toBeDefined();
+    });
+
+
+    // ==========================
+    // TEST REFRESH TOKEN COOKIE
+    // ==========================
+
+    it("should refresh token", async () => {
+
+        const response = await request(app)
+            .post("/api/v1/auth/refresh")
+            .set("Cookie", refreshTokenCookie);
+
+        expect(response.status).toBe(200);
+        expect(response.body.data.accessToken).toBeDefined();
+        expect(response.body.data.refreshToken).toBeDefined();
+        expect(response.body.data.refreshToken).not.toBe(refreshTokenCookie.split("=")[1]);
+    });
+
+
+    // ================================
+    // TEST USER LOGOUT CURRENT DEVICE
+    // ================================
+
+    it("should logout current device", async () => {
+        const response = await request(app)
+            .post("/api/v1/auth/logout")
+            .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Logged out successfully");
+    });
+
 });

@@ -43,19 +43,19 @@ app.use(corsConfig);
 */
 app.use(rateLimitConfig);
 
-/**
- * Cookie parse
- */
-app.use(cookieParser());
 
 /**
  * Body parsers 
  * Parse incoming request with JSON data and HTML form data
  * limit option protects the server from large payload attacks, 
  * and improves server performance
- */
+*/
 app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+/**
+ * Cookie parse
+ */
+app.use(cookieParser());
 
 /**
  * Routes

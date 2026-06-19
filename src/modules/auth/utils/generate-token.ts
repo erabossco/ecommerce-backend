@@ -22,5 +22,15 @@ type GenerateTokenParams = {
 
 export const generateToken = ({ payload, secret, expiresIn }: GenerateTokenParams): string => {
 
-    return jwt.sign(payload, secret, { expiresIn });
+    return jwt.sign(
+        {
+            ...payload,
+            // Unique identifier for each JWT.
+            // Prevents duplicate tokens during fast refresh rotation
+            // where payload + iat could otherwise generate the same JWT.
+            jti: crypto.randomUUID(),
+        },
+        secret,
+        { expiresIn },
+    );
 };
