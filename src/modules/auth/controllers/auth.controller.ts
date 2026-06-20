@@ -192,7 +192,7 @@ class AuthController {
      * @param next Express next middleware function for error handling.
      */
 
-    myProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    getProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const authReq = req as AuthRequest;
             const userId = authReq.user.userId;

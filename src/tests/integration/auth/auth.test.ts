@@ -29,6 +29,8 @@ describe("Auth API", () => {
 
         expect(response.status).toBe(201);
         expect(response.body.data.tokens.accessToken).toBeDefined();
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Registration successful")
 
         accessToken = response.body.data.tokens.accessToken;
 
@@ -53,6 +55,8 @@ describe("Auth API", () => {
 
         expect(response.status).toBe(200);
         expect(response.body.data.tokens.accessToken).toBeDefined();
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Login successful");
     });
 
 
@@ -70,6 +74,8 @@ describe("Auth API", () => {
         expect(response.body.data.accessToken).toBeDefined();
         expect(response.body.data.refreshToken).toBeDefined();
         expect(response.body.data.refreshToken).not.toBe(refreshTokenCookie.split("=")[1]);
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Token refreshed successfully");
     });
 
 
@@ -86,5 +92,35 @@ describe("Auth API", () => {
         expect(response.body.success).toBe(true);
         expect(response.body.message).toBe("Logged out successfully");
     });
+
+
+    // =======================
+    // TEST LOGOUT ALL DEVICES
+    // =======================
+
+    it("should logout all devices", async () => {
+        const response = await request(app)
+            .post("/api/v1/auth/logoutALL")
+            .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Logged out from all devices");
+    });
+
+
+    // ======================
+    // TEST GET PROFILE
+    // ======================
+
+    it("should get user profile", async () => {
+        const response = await request(app)
+            .get("/api/v1/auth/profile")
+            .set("Authorization", `Bearer ${accessToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.email).toBe(testUser.email);
+    })
 
 });

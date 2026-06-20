@@ -12,7 +12,7 @@ router.post("/refresh", authController.refreshToken);
 // Protected routes
 router.post("/logout", authenticate, authController.logout);
 router.post("/logoutAll", authenticate, authController.logoutAll);
-router.get("/profile", authenticate, authController.myProfile);
+router.get("/profile", authenticate, authController.getProfile);
 
 
 export const authRoutes = router;
