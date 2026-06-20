@@ -43,16 +43,18 @@ model User {
   role     Role         @default(USER)
   provider AuthProvider @default(EMAIL)
 
-  isEmailVerified Boolean @default(false)
-  isActive        Boolean @default(true)
-  isDeleted       Boolean @default(false)
+  isEmailVerified Boolean   @default(false)
+  emailVerifiedAt DateTime?
+  isActive        Boolean   @default(true)
+  isDeleted       Boolean   @default(false)
 
   lastLoginAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessions Session[]
+  sessions                Session[]
+  emailVerificationTokens EmailVerificationToken[]
 
   @@index([email])
   @@index([role])
@@ -95,4 +97,19 @@ model RefreshToken {
 
   @@index([sessionId])
   @@index([revokedAt])
+}
+
+model EmailVerificationToken {
+  id String @id @default(cuid())
+
+  userId    String
+  tokenHash String @unique
+
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
