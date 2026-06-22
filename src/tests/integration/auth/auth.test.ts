@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import request from "supertest";
 import app from "@/app.js";
+import { AUTH_MESSAGES } from "@/modules/auth/constants/auth.constants.js";
 
 describe("Auth API", () => {
-
 
     // Store tokens for later auth tests
     let accessToken = "";
@@ -11,6 +11,8 @@ describe("Auth API", () => {
 
 
     // Unique user email with Date.now() per run test
+    // `AfterAll` setup will delete all test data when completes the test
+    // based on email starts with `test-`
     const testUser = {
         firstName: "Mamun",
         lastName: "Hossain",
@@ -30,7 +32,7 @@ describe("Auth API", () => {
         expect(response.status).toBe(201);
         expect(response.body.data.tokens.accessToken).toBeDefined();
         expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe("Registration successful")
+        expect(response.body.message).toBe(AUTH_MESSAGES.REGISTER_SUCCESS)
 
         accessToken = response.body.data.tokens.accessToken;
 
@@ -56,7 +58,7 @@ describe("Auth API", () => {
         expect(response.status).toBe(200);
         expect(response.body.data.tokens.accessToken).toBeDefined();
         expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe("Login successful");
+        expect(response.body.message).toBe(AUTH_MESSAGES.LOGIN_SUCCESS);
     });
 
 
@@ -74,8 +76,7 @@ describe("Auth API", () => {
         expect(response.body.data.accessToken).toBeDefined();
         expect(response.body.data.refreshToken).toBeDefined();
         expect(response.body.data.refreshToken).not.toBe(refreshTokenCookie.split("=")[1]);
-        expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe("Token refreshed successfully");
+        expect(response.body).toMatchObject({ success: true, message: AUTH_MESSAGES.TOKEN_REFRESHED });
     });
 
 
@@ -88,9 +89,9 @@ describe("Auth API", () => {
             .post("/api/v1/auth/logout")
             .set("Authorization", `Bearer ${accessToken}`);
 
+
         expect(response.status).toBe(200);
-        expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe("Logged out successfully");
+        expect(response.body).toMatchObject({ success: true, message: AUTH_MESSAGES.LOGOUT_SUCCESS });
     });
 
 
@@ -104,8 +105,7 @@ describe("Auth API", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(response.status).toBe(200);
-        expect(response.body.success).toBe(true);
-        expect(response.body.message).toBe("Logged out from all devices");
+        expect(response.body).toMatchObject({ success: true, message: AUTH_MESSAGES.LOGOUT_ALL_SUCCESS });
     });
 
 
@@ -119,8 +119,7 @@ describe("Auth API", () => {
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(response.status).toBe(200);
-        expect(response.body.success).toBe(true);
-        expect(response.body.data.email).toBe(testUser.email);
-    })
+        expect(response.body).toMatchObject({ success: true, data: { email: testUser.email } });
+    });
 
 });
