@@ -23,7 +23,7 @@ class AuthEmailService {
             subject: "Verify your email",
             html: `
             <div>
-            <h2> Hello ${firstName}
+            <h2> Hello ${firstName}</h2>
             <p>Greetings from ${envConfig.app.name}!</p>
             <div>
             <p>Please verify your email address.</p>

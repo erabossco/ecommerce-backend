@@ -2,12 +2,14 @@ import { describe, it, expect } from "vitest";
 import request from "supertest";
 import app from "@/app.js";
 import { AUTH_MESSAGES } from "@/modules/auth/constants/auth.constants.js";
+import { emailVerificationService } from "@/modules/auth/services/email-verification.service.js";
 
 describe("Auth API", () => {
 
     // Store tokens for later auth tests
     let accessToken = "";
     let refreshTokenCookie = "";
+    let emailVerificationToken = "";
 
 
     // Unique user email with Date.now() per run test
@@ -41,6 +43,9 @@ describe("Auth API", () => {
             throw new Error("Refresh token cookie not found");
         }
         refreshTokenCookie = cookies[0]!.split(";")[0]!;
+
+        const user = response.body.data.user;
+        emailVerificationToken = await emailVerificationService.createEmailVerificationToken(user.id);
     });
 
     // ================
@@ -120,6 +125,22 @@ describe("Auth API", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toMatchObject({ success: true, data: { email: testUser.email } });
+    });
+
+    // =======================
+    // TEST VERIFY EMAIL
+    // =======================
+
+    it("should verify email", async () => {
+        const response = await request(app)
+            .post("/api/v1/auth/verify-email")
+            .send({ token: emailVerificationToken });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toMatchObject({
+            success: true,
+            message: AUTH_MESSAGES.EMAIL_VERIFIED,
+        });
     });
 
 });

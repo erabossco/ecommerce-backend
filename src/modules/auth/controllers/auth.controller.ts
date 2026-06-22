@@ -3,6 +3,7 @@ import { authService } from "../services/auth.service.js";
 import { cookieConfig } from "@/config/security/cookie.config.js";
 import { requireUser } from "@/shared/utils/require-user.util.js";
 import { AUTH_MESSAGES } from "../constants/auth.constants.js";
+import { emailVerificationService } from "../services/email-verification.service.js";
 
 
 class AuthController {
@@ -207,6 +208,28 @@ class AuthController {
             next(error);
         }
     };
+
+
+    // ==================
+    // VERIFY EMAIL
+    // ==================
+
+    /**
+     * Verify user's email using verification token
+     */
+    verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { token } = req.body;
+            await emailVerificationService.verifyEmail(token);
+            res.status(200).json({
+                success: true,
+                message: AUTH_MESSAGES.EMAIL_VERIFIED,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
 
 }
 
