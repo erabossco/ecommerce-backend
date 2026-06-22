@@ -1,7 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import type { AuthRequest } from "@/shared/types/express.types.js";
 import { authService } from "../services/auth.service.js";
 import { cookieConfig } from "@/config/security/cookie.config.js";
+import { requireUser } from "@/shared/utils/require-user.util.js";
+import { AUTH_MESSAGES } from "../constants/auth.constants.js";
 
 
 class AuthController {
@@ -31,7 +32,7 @@ class AuthController {
             // register response
             res.status(201).json({
                 success: true,
-                message: "Registration successful",
+                message: AUTH_MESSAGES.REGISTER_SUCCESS,
                 data: result,
             });
         } catch (error) {
@@ -67,7 +68,7 @@ class AuthController {
             // login response
             res.status(200).json({
                 success: true,
-                message: "Login successful",
+                message: AUTH_MESSAGES.LOGIN_SUCCESS,
                 data: result,
             });
         } catch (error) {
@@ -93,7 +94,7 @@ class AuthController {
             if (!refreshToken) {
                 res.status(401).json({
                     success: false,
-                    message: "Refresh token missing"
+                    message: AUTH_MESSAGES.REFRESH_TOKEN_MISSING,
                 });
                 return;
             }
@@ -107,7 +108,7 @@ class AuthController {
             // refresh response
             res.status(200).json({
                 success: true,
-                message: "Token refreshed successfully",
+                message: AUTH_MESSAGES.TOKEN_REFRESHED,
                 data: tokens,
             });
         } catch (error) {
@@ -129,8 +130,8 @@ class AuthController {
 
     logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const authReq = req as AuthRequest;
-            const sessionId = authReq.user.sessionId;
+            const user = requireUser(req);
+            const sessionId = user.sessionId;
             const result = await authService.logout(sessionId);
 
             // clear cookie
@@ -139,7 +140,7 @@ class AuthController {
             // logout response
             res.status(200).json({
                 success: true,
-                message: "Logged out successfully",
+                message: AUTH_MESSAGES.LOGOUT_SUCCESS,
                 data: result,
             });
         } catch (error) {
@@ -162,8 +163,9 @@ class AuthController {
 
     logoutAll = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const authReq = req as AuthRequest;
-            const userId = authReq.user.userId;
+            // const authReq = req as AuthRequest;
+            const user = requireUser(req);
+            const userId = user.userId;
             const result = await authService.logoutAllDevices(userId);
 
             // clear all cookies
@@ -172,7 +174,7 @@ class AuthController {
             // response for logout all devices
             res.status(200).json({
                 success: true,
-                message: "Logged out from all devices",
+                message: AUTH_MESSAGES.LOGOUT_ALL_SUCCESS,
                 data: result,
             });
         } catch (error) {
@@ -194,12 +196,12 @@ class AuthController {
 
     getProfile = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const authReq = req as AuthRequest;
-            const userId = authReq.user.userId;
-            const user = await authService.getCurrentUser(userId);
+            const user = requireUser(req);
+            const userId = user.userId;
+            const userProfile = await authService.getCurrentUser(userId);
             res.status(200).json({
                 success: true,
-                data: user,
+                data: userProfile,
             });
         } catch (error) {
             next(error);

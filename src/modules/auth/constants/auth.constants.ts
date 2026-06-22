@@ -39,6 +39,7 @@ export const AUTH_MESSAGES = {
     REGISTER_SUCCESS: "User registered successfully",
     LOGIN_SUCCESS: "Login successful",
     LOGOUT_SUCCESS: "Logout successful",
+    LOGOUT_ALL_SUCCESS: "Logged out from all devices",
 
     INVALID_CREDENTIALS: "Invalid email or password",
     UNAUTHORIZED: "Unauthorized access",
@@ -46,6 +47,9 @@ export const AUTH_MESSAGES = {
 
     TOKEN_EXPIRED: "Token has expired",
     TOKEN_INVALID: "Invalid token",
+
+    REFRESH_TOKEN_MISSING: "Refresh token missing",
+    TOKEN_REFRESHED: "Token refreshed successfully",
 
     EMAIL_EXISTS: "Email already exists",
     EMAIL_NOT_FOUND: "Email not found",

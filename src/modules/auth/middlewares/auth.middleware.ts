@@ -1,5 +1,4 @@
 import type { Request, Response, NextFunction } from "express";
-import type { AuthRequest } from "@/shared/types/express.types.js";
 import { jwtService } from "../services/jwt.service.js";
 import { UnauthorizedError } from "@/shared/errors/index.js";
 
@@ -20,9 +19,7 @@ export const authenticate = (
         }
 
         const payload = jwtService.verifyAccessToken(token);
-        const authReq = req as AuthRequest;
-
-        authReq.user = payload;
+        req.user = payload;
 
         next();
 
