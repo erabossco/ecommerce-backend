@@ -18,6 +18,9 @@ import type {
 } from "../types/auth.types.js";
 
 import { NotFoundError } from "@/shared/errors/not-found.error.js";
+import { passwordResetService } from "./password-reset.service.js";
+import { envConfig } from "@/config/env/index.js";
+import { authEmailService } from "./auth-email.service.js";
 
 /**
  * AUTH SERVICE
@@ -196,6 +199,33 @@ class AuthService {
         }
 
         return user;
+    }
+
+    // ==================
+    // FORGOT PASSWORD
+    // ==================
+    async fortgotPassword(email: string): Promise<void> {
+        const user = await prisma.user.findUnique({
+            where: {
+                email,
+            }
+        });
+
+        if (!user) {
+            return;
+        }
+        const token = await passwordResetService.createPasswordResetToken(user.id);
+
+        const resetUrl = `${envConfig.app.clientUrl}/reset-password?token=${token}`;
+        await authEmailService.sendPasswordResetEmail(user.email, user.firstName, resetUrl);
+    }
+
+    // ====================
+    // RESET PASSWORD
+    // ====================
+
+    async resetPassword(token: string, password: string) {
+        await passwordResetService.resetPassword(token, password);
     }
 }
 

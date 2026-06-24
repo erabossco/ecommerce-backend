@@ -4,6 +4,7 @@ import { cookieConfig } from "@/config/security/cookie.config.js";
 import { requireUser } from "@/shared/utils/require-user.util.js";
 import { AUTH_MESSAGES } from "../constants/auth.constants.js";
 import { emailVerificationService } from "../services/email-verification.service.js";
+import { success } from "zod";
 
 
 class AuthController {
@@ -225,6 +226,44 @@ class AuthController {
                 success: true,
                 message: AUTH_MESSAGES.EMAIL_VERIFIED,
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     * Sent email for forgot password 
+     */
+
+    forgotPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { email } = req.body;
+            await authService.fortgotPassword(email);
+            res.status(200).json({
+                success: true,
+                message: AUTH_MESSAGES.PASSWORD_RESET_EMAIL_SENT,
+            });
+
+        } catch (error) {
+            next(error)
+        }
+
+    }
+
+    /**
+     * Reset password with link that sent to email
+     */
+
+    resetPassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { token, password } = req.body;
+            await authService.resetPassword(token, password);
+
+            res.status(200).json({
+                success: true,
+                message: AUTH_MESSAGES.PASSWORD_RESET_SUCCESS,
+            });
+
         } catch (error) {
             next(error);
         }

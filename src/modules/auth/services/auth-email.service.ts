@@ -38,6 +38,35 @@ class AuthEmailService {
             `
         });
     }
+
+
+    // ============================
+    // SEND PASSWORD RESET EMAIL
+    // ============================
+
+    async sendPasswordResetEmail(email: string, firstName: string, resetUrl: string) {
+        await this.transporter.sendMail({
+            to: email,
+            subject: "Reset your password",
+            html:
+                `
+            <div>
+            Hello ${firstName}!
+
+            <p>We received a request to reset your password.</p>
+            <p>If this is you please <a href="${resetUrl}">RESET PASSWORD</a> here.</p>
+            <p>If this request was not made by you, 
+            someone may be attempting to access your account.</p>
+            <p>Do not share this link with anyone.</p>
+
+            <div>
+            Thank you.
+            ${envConfig.app.name}
+            </div>
+            </div>
+            `
+        });
+    }
 }
 
 export const authEmailService = new AuthEmailService();
