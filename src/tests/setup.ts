@@ -17,17 +17,6 @@ beforeAll(async () => {
 
 afterAll(async () => {
 
-    // delete test eamil verification token
-    await prisma.emailVerificationToken.deleteMany({
-        where: {
-            user: {
-                email: {
-                    startsWith: "test-"
-                }
-            }
-        }
-    });
-
     // delete test user data
     await prisma.user.deleteMany({
         where: {
