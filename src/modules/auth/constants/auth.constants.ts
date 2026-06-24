@@ -54,6 +54,9 @@ export const AUTH_MESSAGES = {
     EMAIL_EXISTS: "Email already exists",
     EMAIL_NOT_FOUND: "Email not found",
 
+    INVALID_PASSWORD_RESET_TOKEN: "Invalid password reset token",
+    USED_PASSWORD_RESET_TOKEN: "Password reset token already used",
+    EXPIRED_PASSWORD_RESET_TOKEN: "Password reset token expired",
     PASSWORD_RESET_SUCCESS: "Password reset successful",
     EMAIL_CHANGED: "Email changed successfully",
     EMAIL_VERIFIED: "Email verified successfully",
