@@ -3,6 +3,11 @@ import request from "supertest";
 import app from "@/app.js";
 import { AUTH_MESSAGES } from "@/modules/auth/constants/auth.constants.js";
 import { emailVerificationService } from "@/modules/auth/services/email-verification.service.js";
+import { prisma } from "@/infrastructure/database/prisma/prisma.client.js"
+import { BadRequestError } from "@/shared/errors/bad-request.error.js";
+import { passwordResetService } from "@/modules/auth/services/password-reset.service.js";
+
+
 
 describe("Auth API", () => {
 
@@ -10,6 +15,8 @@ describe("Auth API", () => {
     let accessToken = "";
     let refreshTokenCookie = "";
     let emailVerificationToken = "";
+
+    const authEndPoint = "/api/v1/auth";
 
 
     // Unique user email with Date.now() per run test
@@ -28,7 +35,7 @@ describe("Auth API", () => {
 
     it("should register a user", async () => {
         const response = await request(app)
-            .post("/api/v1/auth/register")
+            .post(`${authEndPoint}/register`)
             .send(testUser);
 
         expect(response.status).toBe(201);
@@ -54,7 +61,7 @@ describe("Auth API", () => {
 
     it("should login user", async () => {
         const response = await request(app)
-            .post("/api/v1/auth/login")
+            .post(`${authEndPoint}/login`)
             .send({
                 email: testUser.email,
                 password: testUser.password,
@@ -74,7 +81,7 @@ describe("Auth API", () => {
     it("should refresh token", async () => {
 
         const response = await request(app)
-            .post("/api/v1/auth/refresh")
+            .post(`${authEndPoint}/refresh`)
             .set("Cookie", refreshTokenCookie);
 
         expect(response.status).toBe(200);
@@ -91,7 +98,7 @@ describe("Auth API", () => {
 
     it("should logout current device", async () => {
         const response = await request(app)
-            .post("/api/v1/auth/logout")
+            .post(`${authEndPoint}/logout`)
             .set("Authorization", `Bearer ${accessToken}`);
 
 
@@ -106,7 +113,7 @@ describe("Auth API", () => {
 
     it("should logout all devices", async () => {
         const response = await request(app)
-            .post("/api/v1/auth/logoutALL")
+            .post(`${authEndPoint}/logoutALL`)
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(response.status).toBe(200);
@@ -120,7 +127,7 @@ describe("Auth API", () => {
 
     it("should get user profile", async () => {
         const response = await request(app)
-            .get("/api/v1/auth/profile")
+            .get(`${authEndPoint}/profile`)
             .set("Authorization", `Bearer ${accessToken}`);
 
         expect(response.status).toBe(200);
@@ -133,13 +140,63 @@ describe("Auth API", () => {
 
     it("should verify email", async () => {
         const response = await request(app)
-            .post("/api/v1/auth/verify-email")
+            .post(`${authEndPoint}/verify-email`)
             .send({ token: emailVerificationToken });
 
         expect(response.status).toBe(200);
         expect(response.body).toMatchObject({
             success: true,
             message: AUTH_MESSAGES.EMAIL_VERIFIED,
+        });
+    });
+
+    // =====================
+    // TEST FORGOT PASSWORD
+    // =====================
+
+    it("should send password reset email", async () => {
+        const response = await request(app)
+            .post(`${authEndPoint}/forgot-password`)
+            .send({ email: testUser.email });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toMatchObject({
+            success: true,
+            message: AUTH_MESSAGES.PASSWORD_RESET_EMAIL_SENT,
+        });
+    });
+
+
+    // =====================
+    // TEST RESET PASSWORD
+    // =====================
+
+    it("should reset password", async () => {
+        const user = await prisma.user.findUnique({
+            where: {
+                email: testUser.email
+            }
+        });
+        if (!user) {
+            throw new BadRequestError("Test user not found");
+        }
+
+        const passwordResetToken = await passwordResetService.createPasswordResetToken(user.id);
+
+        const newPassword = "NewPass123456";
+
+        const response = await request(app)
+            .post(`${authEndPoint}/reset-password`)
+            .send({
+                token: passwordResetToken,
+                newPassword
+            });
+
+        expect(response.status).toBe(200);
+
+        expect(response.body).toMatchObject({
+            success: true,
+            message: AUTH_MESSAGES.PASSWORD_RESET_SUCCESS,
         });
     });
 
