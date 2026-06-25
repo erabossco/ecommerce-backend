@@ -25,6 +25,10 @@ describe("Auth API", () => {
     const testUser = {
         firstName: "Mamun",
         lastName: "Hossain",
+        // Use your original email to pass the TEST RESET PASSWORD
+        // and put that email also in setup.ts inside test folder 
+        // to run frequent test, otherwise db clean will fail
+        // and prevent next test run with the same email address
         email: `test-${Date.now()}@example.com`,
         password: "Password123"
     };
@@ -171,6 +175,10 @@ describe("Auth API", () => {
     // TEST RESET PASSWORD
     // =====================
 
+    /**
+     * require your original email, test email will not work 
+     */
+
     it("should reset password", async () => {
         const user = await prisma.user.findUnique({
             where: {
@@ -189,7 +197,7 @@ describe("Auth API", () => {
             .post(`${authEndPoint}/reset-password`)
             .send({
                 token: passwordResetToken,
-                newPassword
+                password: newPassword,
             });
 
         expect(response.status).toBe(200);

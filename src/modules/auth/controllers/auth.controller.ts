@@ -265,6 +265,7 @@ class AuthController {
             });
 
         } catch (error) {
+            console.error("RESET PASSWORD ERROR:", error);
             next(error);
         }
     }
