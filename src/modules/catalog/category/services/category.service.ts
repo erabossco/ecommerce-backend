@@ -3,6 +3,8 @@ import type { Category } from "@prisma/client";
 
 import { categoryRepository } from "../repositories/category.repository.js";
 import type { CategoryQuery, CreateCategoryDto, UpdateCategoryDto, } from "../types/category.types.js";
+import { ConflictError, NotFoundError, BadRequestError } from "@/shared/errors/index.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 
 class CategoryService {
 
@@ -14,24 +16,27 @@ class CategoryService {
         const existingName = await categoryRepository.findByName(data.name);
 
         if (existingName) {
-            throw new Error("Category name already exists.");
+            throw new ConflictError(ERROR_MESSAGES.CATEGORY_NAME_EXISTS);
         }
 
         const existingSlug = await categoryRepository.findBySlug(data.slug);
 
         if (existingSlug) {
-            throw new Error("Category slug already exists.");
+            throw new ConflictError(ERROR_MESSAGES.CATEGORY_SLUG_EXISTS);
         }
 
         if (data.parentId) {
             const parent = await categoryRepository.findById(data.parentId);
 
             if (!parent) {
-                throw new Error("Parent category not found.");
+                throw new NotFoundError(ERROR_MESSAGES.PARENT_CATEGORY_NOT_FOUND);
+            }
+            if (parent.deletedAt) {
+                throw new BadRequestError(ERROR_MESSAGES.PARENT_CATEGORY_DELETED)
             }
         }
 
-        return await categoryRepository.create(data);
+        return categoryRepository.create(data);
     }
 
 
@@ -39,8 +44,12 @@ class CategoryService {
     // FIND AN EXISTING CATEGORY
     // ==========================
 
-    async findById(id: string): Promise<Category | null> {
-        return await categoryRepository.findById(id);
+    async findById(id: string): Promise<Category> {
+        const category = await categoryRepository.findById(id);
+        if (!category) {
+            throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+        }
+        return category;
     }
 
     // =========================
@@ -64,20 +73,18 @@ class CategoryService {
 
             where: {
                 ...(search && {
-                    OR: [
-                        {
-                            name: {
-                                contains: search,
-                                mode: Prisma.QueryMode.insensitive,
-                            },
+                    OR: [{
+                        name: {
+                            contains: search,
+                            mode: Prisma.QueryMode.insensitive,
                         },
-                        {
-                            description: {
-                                contains: search,
-                                mode: Prisma.QueryMode.insensitive,
-                            },
+                    },
+                    {
+                        description: {
+                            contains: search,
+                            mode: Prisma.QueryMode.insensitive,
                         },
-                    ],
+                    },],
                 }),
 
                 ...(parentId !== undefined && { parentId, }),
@@ -96,14 +103,14 @@ class CategoryService {
         const category = await categoryRepository.findById(id);
 
         if (!category) {
-            throw new Error("Category not found.");
+            throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
         }
 
         if (data.name) {
             const existing = await categoryRepository.findByName(data.name);
 
             if (existing && existing.id !== id) {
-                throw new Error("Category name already exists.");
+                throw new ConflictError(ERROR_MESSAGES.CATEGORY_NAME_EXISTS);
             }
         }
 
@@ -111,23 +118,25 @@ class CategoryService {
             const existing = await categoryRepository.findBySlug(data.slug);
 
             if (existing && existing.id !== id) {
-                throw new Error("Category slug already exists.");
+                throw new ConflictError(ERROR_MESSAGES.CATEGORY_SLUG_EXISTS);
             }
         }
 
-        if (data.parentId) {
-            const parent = await categoryRepository.findById(data.parentId);
+        if (data.parentId !== undefined) {
+            if (data.parentId !== null) {
+                const parent = await categoryRepository.findById(data.parentId);
 
-            if (!parent) {
-                throw new Error("Parent category not found.");
-            }
+                if (!parent) {
+                    throw new NotFoundError(ERROR_MESSAGES.PARENT_CATEGORY_NOT_FOUND);
+                }
 
-            if (parent.id === id) {
-                throw new Error("Category cannot be its own parent.");
+                if (parent.id === id) {
+                    throw new BadRequestError(ERROR_MESSAGES.CATEGORY_SELF_PARENT);
+                }
             }
         }
 
-        return await categoryRepository.update(id, data);
+        return categoryRepository.update(id, data);
     }
 
     // ====================
@@ -136,12 +145,15 @@ class CategoryService {
 
     async delete(id: string): Promise<Category> {
         const category = await categoryRepository.findById(id);
-
+        const children = await categoryRepository.hasChildren(id);
         if (!category) {
-            throw new Error("Category not found.");
+            throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+        }
+        if (children) {
+            throw new ConflictError(ERROR_MESSAGES.CATEGORY_HAS_CHILDREN);
         }
 
-        return await categoryRepository.delete(id);
+        return categoryRepository.delete(id);
     }
 }
 

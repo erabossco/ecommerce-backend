@@ -51,6 +51,15 @@ class CategoryRepository {
         return await prisma.category.findMany(args);
     }
 
+    // CHECK CHILDREDN OF CATEGORY
+    async hasChildren(parentId: string): Promise<boolean> {
+        const count = await prisma.category.count({
+            where: { parentId },
+        });
+
+        return count > 0;
+    }
+
 
     // COUNT CATEGORY
     async count(args?: Prisma.CategoryCountArgs): Promise<number> {
