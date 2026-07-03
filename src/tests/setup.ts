@@ -1,6 +1,10 @@
 import { beforeAll, afterAll } from "vitest";
 import { prisma } from "@/infrastructure/database/prisma/prisma.client.js";
 
+// ==============================================
+// This code is implemented via vitest.config.ts
+// ==============================================
+
 // vitest setup for db connection
 beforeAll(async () => {
     await prisma.$connect();
@@ -23,6 +27,15 @@ afterAll(async () => {
             email: {
                 startsWith: "test-"
             },
+        }
+    });
+
+    // delte test category
+    await prisma.category.deleteMany({
+        where: {
+            name: {
+                startsWith: "test-"
+            }
         }
     });
 
