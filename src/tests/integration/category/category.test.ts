@@ -1,7 +1,7 @@
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 import app from "@/app.js";
-import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
+import type { CreateCategoryDto } from "@/modules/catalog/category/types/category.types.js";
 
 const categoryEndPoint = "/api/v1/categories";
 
@@ -20,9 +20,10 @@ let result: Partial<Result> = {};
 
 describe("POST /categories", () => {
 
+    const uniqueString = Date.now()
     const payload = {
-        name: `test-category-${Date.now()}`,
-        slug: "test-slug",
+        name: `test-category-${uniqueString}`,
+        slug: `test-category-${uniqueString}`,
         description: "Test category items"
     };
 

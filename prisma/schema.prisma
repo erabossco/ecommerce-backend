@@ -32,7 +32,7 @@ enum AuthProvider {
 // === USER MODEL ===
 
 model User {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   firstName String
   lastName  String
@@ -68,7 +68,7 @@ model User {
 // === SESSION MODEL ===
 
 model Session {
-  id     String @id @default(cuid())
+  id     String @id @default(cuid(2))
   userId String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -93,7 +93,7 @@ model Session {
 // === REFRESH TOKEN MODEL ===
 
 model RefreshToken {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   sessionId String
   session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
@@ -113,7 +113,7 @@ model RefreshToken {
 // === EMAIL VERIFICATION TOKEN MODEL === 
 
 model EmailVerificationToken {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   userId    String
   tokenHash String @unique
@@ -131,7 +131,7 @@ model EmailVerificationToken {
 // === PASSWORD TOKEN MODLE ===
 
 model PasswordResetToken {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   userId    String
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -149,7 +149,7 @@ model PasswordResetToken {
 // === CATEGORY MODLE ===
 
 model Category {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   name        String
   slug        String  @unique
@@ -186,7 +186,7 @@ model Category {
 // === PRODUCT MODEL ===
 
 model Product {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   name        String
   slug        String
@@ -225,7 +225,7 @@ model Product {
 // ===  BRAND MODEL ===
 
 model Brand {
-  id String @id @default(cuid())
+  id String @id @default(cuid(2))
 
   name        String
   slug        String

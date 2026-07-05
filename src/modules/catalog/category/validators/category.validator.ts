@@ -33,13 +33,30 @@ export const createCategorySchema = z.object({
         .optional(),
 
     parentId: z
-        .uuid()
+        .cuid2()
         .nullable()
         .optional(),
 
     isActive: z
         .boolean()
         .default(true),
+    sortOrder: z
+        .number()
+        .int()
+        .min(CATEGORY.SORT_ORDER.MIN)
+        .default(0),
+
+    metaTitle: z
+        .string()
+        .trim()
+        .max(CATEGORY.META_TITLE.MAX_LENGTH)
+        .optional(),
+
+    metaDescription: z
+        .string()
+        .trim()
+        .max(CATEGORY.META_DESCRIPTION.MAX_LENGTH)
+        .optional(),
 });
 
 
@@ -75,11 +92,29 @@ export const updateCategorySchema = z.object({
         .optional(),
 
     parentId: z
-        .uuid()
+        .cuid2()
         .nullable()
         .optional(),
 
     isActive: z
         .boolean()
+        .optional(),
+
+    sortOrder: z
+        .number()
+        .int()
+        .min(CATEGORY.SORT_ORDER.MIN)
+        .optional(),
+
+    metaTitle: z
+        .string()
+        .trim()
+        .max(CATEGORY.META_TITLE.MAX_LENGTH)
+        .optional(),
+
+    metaDescription: z
+        .string()
+        .trim()
+        .max(CATEGORY.META_DESCRIPTION.MAX_LENGTH)
         .optional(),
 });

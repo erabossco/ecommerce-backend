@@ -1,9 +1,7 @@
 import { z } from "zod";
-
+import { Prisma } from "@prisma/client";
 import { createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
-
 export type CreateCategoryDto = z.infer<typeof createCategorySchema>;
-
 export type UpdateCategoryDto = z.infer<typeof updateCategorySchema>;
 
 export interface CategoryQuery {
@@ -13,5 +11,5 @@ export interface CategoryQuery {
     parentId?: string | null;
     isActive?: boolean;
     sortBy?: string;
-    order?: "asc" | "desc";
+    order?: Prisma.SortOrder;
 }

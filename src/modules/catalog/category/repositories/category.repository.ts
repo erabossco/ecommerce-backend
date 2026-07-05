@@ -12,24 +12,35 @@ class CategoryRepository {
                 name: data.name,
                 slug: data.slug,
                 isActive: data.isActive,
-                ...(data.description !== undefined && { description: data.description }),
-                ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl }),
-                ...(data.parentId !== undefined && { parentId: data.parentId }),
+                sortOrder: data.sortOrder,
+
+                ...(data.description !== undefined && { description: data.description, }),
+                ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl, }),
+                ...(data.parentId !== undefined && { parentId: data.parentId, }),
+                ...(data.sortOrder !== undefined && { sortOrder: data.sortOrder, }),
+                ...(data.metaTitle !== undefined && { metaTitle: data.metaTitle, }),
+                ...(data.metaDescription !== undefined && { metaDescription: data.metaDescription, }),
             }
         });
     }
 
     // FIND CATEGORY BY ID
     async findById(id: string): Promise<Category | null> {
-        return await prisma.category.findUnique({
-            where: { id },
+        return await prisma.category.findFirst({
+            where: {
+                id,
+                deletedAt: null,
+            },
         });
     }
 
     // FIND CATEGORY BY SLUG
     async findBySlug(slug: string): Promise<Category | null> {
-        return await prisma.category.findUnique({
-            where: { slug },
+        return await prisma.category.findFirst({
+            where: {
+                slug,
+                deletedAt: null,
+            },
         })
     }
 
@@ -40,7 +51,8 @@ class CategoryRepository {
                 name: {
                     equals: name,
                     mode: Prisma.QueryMode.insensitive,
-                }
+                },
+                deletedAt: null,
             }
         })
     }
@@ -48,13 +60,23 @@ class CategoryRepository {
 
     // FIND CATEGORIES
     async findMany(args?: Prisma.CategoryFindManyArgs): Promise<Category[]> {
-        return await prisma.category.findMany(args);
+        return await prisma.category.findMany({
+            ...args,
+            where: {
+                deletedAt: null,
+                ...args?.where,
+            }
+
+        });
     }
 
     // CHECK CHILDREDN OF CATEGORY
     async hasChildren(parentId: string): Promise<boolean> {
         const count = await prisma.category.count({
-            where: { parentId },
+            where: {
+                parentId,
+                deletedAt: null,
+            },
         });
 
         return count > 0;
@@ -63,7 +85,13 @@ class CategoryRepository {
 
     // COUNT CATEGORY
     async count(args?: Prisma.CategoryCountArgs): Promise<number> {
-        return await prisma.category.count(args);
+        return await prisma.category.count({
+            ...args,
+            where: {
+                deletedAt: null,
+                ...args?.where,
+            }
+        });
     }
 
     // UPDATE A CATEGORY

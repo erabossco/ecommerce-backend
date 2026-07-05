@@ -21,6 +21,17 @@ export const CATEGORY = {
     IMAGE_URL: {
         MAX_LENGTH: 100,
     },
+    META_TITLE: {
+        MAX_LENGTH: 255,
+    },
+
+    META_DESCRIPTION: {
+        MAX_LENGTH: 500,
+    },
+
+    SORT_ORDER: {
+        MIN: 0,
+    },
 } as const;
 
 
