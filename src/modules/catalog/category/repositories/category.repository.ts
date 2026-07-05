@@ -17,7 +17,6 @@ class CategoryRepository {
                 ...(data.description !== undefined && { description: data.description, }),
                 ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl, }),
                 ...(data.parentId !== undefined && { parentId: data.parentId, }),
-                ...(data.sortOrder !== undefined && { sortOrder: data.sortOrder, }),
                 ...(data.metaTitle !== undefined && { metaTitle: data.metaTitle, }),
                 ...(data.metaDescription !== undefined && { metaDescription: data.metaDescription, }),
             }
