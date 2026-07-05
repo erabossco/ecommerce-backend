@@ -90,3 +90,33 @@ describe("GET /categories", () => {
         expect(response.body.data.length).toBeGreaterThan(0);
     });
 });
+
+
+// =============================
+// UPDATE CATEGORY
+// =============================
+
+describe("PATCH /categories/:id", () => {
+
+    it("should update a category", async () => {
+
+        const id = result.id;
+        const updatePayload = {
+            name: "test-category-latest",
+            slug: "test-category-latest",
+            description: "latest category",
+            imageUrl: "http://example.com/test-image-url-of-category",
+        }
+
+        const response = await request(app)
+            .patch(`${categoryEndPoint}/${id}`)
+            .send(updatePayload);
+        console.log(response.body.data)
+        expect(response.status).toBe(200);
+        expect(response.body.success).toBe(true);
+        expect(response.body.data.updatedAt).toBeDefined();
+        expect(response.body.data.imageUrl).toBeDefined();
+        expect(response.body.data).toMatchObject(updatePayload);
+        expect(response.body.data).not.toMatchObject(result);
+    });
+});
