@@ -145,10 +145,12 @@ class CategoryService {
 
     async delete(id: string): Promise<Category> {
         const category = await categoryRepository.findById(id);
-        const children = await categoryRepository.hasChildren(id);
+
         if (!category) {
             throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
         }
+
+        const children = await categoryRepository.hasChildren(id);
         if (children) {
             throw new ConflictError(ERROR_MESSAGES.CATEGORY_HAS_CHILDREN);
         }

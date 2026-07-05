@@ -82,10 +82,14 @@ class CategoryRepository {
     }
 
 
-    // DELETE A CATEGORY
+    // DELETE A CATEGORY (SOFT DELETE)
     async delete(id: string): Promise<Category> {
-        return await prisma.category.delete({
+        return await prisma.category.update({
             where: { id },
+            data: {
+                isActive: false,
+                deletedAt: new Date(),
+            }
         });
     }
 

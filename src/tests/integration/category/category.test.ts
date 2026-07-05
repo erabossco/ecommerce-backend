@@ -1,6 +1,7 @@
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 import app from "@/app.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 
 const categoryEndPoint = "/api/v1/categories";
 
@@ -111,7 +112,7 @@ describe("PATCH /categories/:id", () => {
         const response = await request(app)
             .patch(`${categoryEndPoint}/${id}`)
             .send(updatePayload);
-        console.log(response.body.data)
+
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.data.updatedAt).toBeDefined();
@@ -120,3 +121,23 @@ describe("PATCH /categories/:id", () => {
         expect(response.body.data).not.toMatchObject(result);
     });
 });
+
+
+// ===============================
+// DELETE A CATEGORY (SOFT DELETE)
+// =============================== 
+
+describe("DELETE /categories/:id", () => {
+
+    it("should delete a category (soft delete)", async () => {
+        const id = result.id;
+
+        const response = await request(app)
+            .delete(`${categoryEndPoint}/${id}`);
+
+        expect(response.body.success).toBe(true);
+        expect(response.body.message).toBe("Category deleted successfully.");
+
+    });
+
+})
