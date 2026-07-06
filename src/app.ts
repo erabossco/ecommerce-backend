@@ -5,6 +5,7 @@ import corsConfig from "./config/security/cors.config.js";
 import rateLimitConfig from "./config/security/rate-limit.config.js";
 import { appRouter } from "./routes/index.js";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./shared/middlewares/error-handler.js";
 
 // Express application instance
 const app = express();
@@ -61,6 +62,14 @@ app.use(cookieParser());
  * Routes
  */
 app.use("/api/v1", appRouter);
+/**
+ * Global error handler
+ */
+app.use(errorHandler);
+
+/**
+ * Home route
+ */
 app.get("/", (req: Request, res: Response) => {
     res.send("Server is running.");
 });

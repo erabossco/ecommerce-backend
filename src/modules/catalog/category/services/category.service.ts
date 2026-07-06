@@ -25,6 +25,12 @@ class CategoryService {
             throw new ConflictError(ERROR_MESSAGES.CATEGORY_SLUG_EXISTS);
         }
 
+        // VERY IMPORTANT
+
+        // If client payload contains parentId, it will create a child category.
+        // If client payload does not contain parentId, it will create a main category.
+        // Both are Category, but a category with parentId is treated as a child category.
+
         if (data.parentId) {
             const parent = await categoryRepository.findById(data.parentId);
 

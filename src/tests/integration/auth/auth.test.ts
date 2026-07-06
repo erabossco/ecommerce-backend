@@ -26,7 +26,7 @@ describe("Auth API", () => {
         firstName: "Mamun",
         lastName: "Hossain",
         // Use your original email to pass the TEST RESET PASSWORD
-        // and put that email also in setup.ts inside test folder 
+        // and put that email also in setup.ts inside test folder
         // to run frequent test, otherwise db clean will fail
         // and prevent next test run with the same email address
         email: `test-${Date.now()}@example.com`,
@@ -176,7 +176,7 @@ describe("Auth API", () => {
     // =====================
 
     /**
-     * require your original email, test email will not work 
+     * require your original email, test email will not work
      */
 
     it("should reset password", async () => {
