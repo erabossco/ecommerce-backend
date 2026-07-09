@@ -174,6 +174,8 @@ describe("Category API", () => {
     // =========================
 
     describe("GET /categories", () => {
+
+        // Get categoriest
         it("should get all categories", async () => {
             const response = await request(app)
                 .get(categoryEndPoint);
@@ -182,6 +184,18 @@ describe("Category API", () => {
             expect(response.body.success).toBe(true);
             expect(response.body.data.length).toBeGreaterThan(0);
         });
+
+        // Category pagination
+        it("should paginate categories", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?page=1&limit=2`);
+            console.log(response.body)
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toHaveLength(2);
+        });
+
+
     });
 
 

@@ -59,7 +59,7 @@ class CategoryController {
 
             res.status(200).json({
                 success: true,
-                data: categories,
+                ...categories,
             });
         } catch (error) {
             next(error);

@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import type { Category } from "@prisma/client";
 
 import { categoryRepository } from "../repositories/category.repository.js";
-import type { CategoryQuery, CreateCategoryDto, UpdateCategoryDto, } from "../types/category.types.js";
+import type { CategoryQuery, CreateCategoryDto, ListResult, UpdateCategoryDto, } from "../types/category.types.js";
 import { ConflictError, NotFoundError, BadRequestError } from "@/shared/errors/index.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 
@@ -62,7 +62,7 @@ class CategoryService {
     // FIND LIST OF CATEGORIES
     // =========================
 
-    async findMany(query: CategoryQuery): Promise<Category[]> {
+    async findMany(query: CategoryQuery): Promise<ListResult<Category>> {
         const {
             page = 1,
             limit = 10,
@@ -73,32 +73,53 @@ class CategoryService {
             order = "desc",
         } = query;
 
-        return await categoryRepository.findMany({
+        const where = {
+            ...(search && {
+                OR: [{
+                    name: {
+                        contains: search,
+                        mode: Prisma.QueryMode.insensitive,
+                    },
+                },
+                {
+                    description: {
+                        contains: search,
+                        mode: Prisma.QueryMode.insensitive,
+                    },
+                },],
+            }),
+
+            ...(parentId !== undefined && { parentId, }),
+            ...(isActive !== undefined && { isActive, }),
+        };
+
+
+        const categories = await categoryRepository.findMany({
             skip: (page - 1) * limit,
             take: limit,
-
-            where: {
-                ...(search && {
-                    OR: [{
-                        name: {
-                            contains: search,
-                            mode: Prisma.QueryMode.insensitive,
-                        },
-                    },
-                    {
-                        description: {
-                            contains: search,
-                            mode: Prisma.QueryMode.insensitive,
-                        },
-                    },],
-                }),
-
-                ...(parentId !== undefined && { parentId, }),
-                ...(isActive !== undefined && { isActive, }),
-            },
-
+            where: where,
             orderBy: { [sortBy]: order, },
         });
+
+
+        const total = await categoryRepository.count({
+            where: where,
+        });
+        const totalPages = Math.ceil(total / limit);
+
+        return {
+            data: categories,
+            meta: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+                hasPreviousPage: page > 1,
+                hasNextPage: page < totalPages,
+                previousPage: page > 1 ? page - 1 : null,
+                nextPage: page < totalPages ? page + 1 : null,
+            }
+        }
     }
 
     // ====================
