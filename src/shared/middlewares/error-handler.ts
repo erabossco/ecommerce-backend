@@ -1,5 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/app.error.js";
+import { ZodError } from "zod";
+import { ERROR_MESSAGES } from "../constants/error-message.js";
 
 
 // IMPORTANT
@@ -13,6 +15,15 @@ export function errorHandler(
     res: Response,
     next: NextFunction
 ) {
+
+    if (err instanceof ZodError) {
+        return res.status(400).json({
+            success: false,
+            message: ERROR_MESSAGES.VALIDATION_FAILED,
+            errors: err.issues,
+        });
+    }
+
     if (err instanceof AppError) {
         return res.status(err.statusCode).json({
             success: false,
@@ -23,6 +34,6 @@ export function errorHandler(
     // If not AppError, return internal server error
     return res.status(500).json({
         success: false,
-        message: "Internal Server Error",
+        message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR,
     });
 }

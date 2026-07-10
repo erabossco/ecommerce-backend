@@ -118,3 +118,39 @@ export const updateCategorySchema = z.object({
         .max(CATEGORY.META_DESCRIPTION.MAX_LENGTH)
         .optional(),
 });
+
+export const CategoryQuerySchema = z.object({
+    page: z
+        .coerce
+        .number()
+        .int()
+        .positive()
+        .optional(),
+
+    limit: z
+        .number()
+        .int()
+        .positive()
+        .optional(),
+
+    search: z
+        .string()
+        .trim()
+        .optional(),
+
+    parentId: z
+        .string()
+        .trim()
+        .nullable()
+        .optional(),
+
+    isActive: z
+        .boolean()
+        .optional(),
+
+    sortBy: z.string().trim().optional(),
+
+    order: z
+        .enum(["asc", "desc"])
+        .optional()
+});

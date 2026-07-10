@@ -5,5 +5,7 @@ export const ERROR_MESSAGES = {
     PARENT_CATEGORY_NOT_FOUND: "Parent category not found.",
     CATEGORY_SELF_PARENT: "A category cannot be its own parent.",
     CATEGORY_HAS_CHILDREN: "Category has children.",
-    PARENT_CATEGORY_DELETED: "Parent category was deleted."
+    PARENT_CATEGORY_DELETED: "Parent category was deleted.",
+    VALIDATION_FAILED: "Validation failed.",
+    INTERNAL_SERVER_ERROR: "Internal server error.",
 } as const;

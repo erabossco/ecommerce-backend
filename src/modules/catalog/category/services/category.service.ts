@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client";
 import type { Category } from "@prisma/client";
 
 import { categoryRepository } from "../repositories/category.repository.js";
-import type { CategoryQuery, CreateCategoryDto, ListResult, UpdateCategoryDto, } from "../types/category.types.js";
+import type { CategoryQueryDto, CreateCategoryDto, ListResult, UpdateCategoryDto, } from "../types/category.types.js";
 import { ConflictError, NotFoundError, BadRequestError } from "@/shared/errors/index.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 
@@ -62,7 +62,7 @@ class CategoryService {
     // FIND LIST OF CATEGORIES
     // =========================
 
-    async findMany(query: CategoryQuery): Promise<ListResult<Category>> {
+    async findMany(query: CategoryQueryDto): Promise<ListResult<Category>> {
         const {
             page = 1,
             limit = 10,
