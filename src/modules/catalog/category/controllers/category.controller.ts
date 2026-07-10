@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { categoryService } from "../services/category.service.js";
-import { CategoryQuerySchema, createCategorySchema, updateCategorySchema } from "../validators/category.validator.js";
+import { categoryQuerySchema, createCategorySchema, updateCategorySchema } from "../validators/category.validator.js";
 import type { CategoryQueryDto } from "../types/category.types.js";
 
 class CategoryController {
@@ -55,7 +55,7 @@ class CategoryController {
                 ...(req.query.order !== undefined && { order: req.query.order === "asc" ? "asc" : "desc", }),
             };
 
-            const categories = await categoryService.findMany(CategoryQuerySchema.parse(query));
+            const categories = await categoryService.findMany(categoryQuerySchema.parse(query));
 
             res.status(200).json({
                 success: true,

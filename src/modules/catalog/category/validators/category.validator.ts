@@ -119,7 +119,7 @@ export const updateCategorySchema = z.object({
         .optional(),
 });
 
-export const CategoryQuerySchema = z.object({
+export const categoryQuerySchema = z.object({
     page: z
         .coerce
         .number()
