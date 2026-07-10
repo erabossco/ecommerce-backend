@@ -119,6 +119,10 @@ export const updateCategorySchema = z.object({
         .optional(),
 });
 
+// ========================
+// CATEGORY QUERY SCHEMA
+// =======================
+
 export const categoryQuerySchema = z.object({
     page: z
         .coerce
@@ -128,6 +132,7 @@ export const categoryQuerySchema = z.object({
         .optional(),
 
     limit: z
+        .coerce
         .number()
         .int()
         .positive()
@@ -145,7 +150,8 @@ export const categoryQuerySchema = z.object({
         .optional(),
 
     isActive: z
-        .boolean()
+        .enum(["true", "false"])
+        .transform(val => val === "true")
         .optional(),
 
     sortBy: z.string().trim().optional(),

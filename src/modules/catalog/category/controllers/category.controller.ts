@@ -45,23 +45,26 @@ class CategoryController {
 
     async findMany(req: Request, res: Response, next: NextFunction,): Promise<void> {
         try {
-            const query: CategoryQueryDto = {
-                ...(req.query.page !== undefined && { page: Number(req.query.page), }),
-                ...(req.query.limit !== undefined && { limit: Number(req.query.limit), }),
-                ...(req.query.search !== undefined && { search: String(req.query.search), }),
-                ...(req.query.parentId !== undefined && { parentId: String(req.query.parentId), }),
-                ...(req.query.isActive !== undefined && { isActive: req.query.isActive === "true", }),
-                ...(req.query.sortBy !== undefined && { sortBy: String(req.query.sortBy), }),
-                ...(req.query.order !== undefined && { order: req.query.order === "asc" ? "asc" : "desc", }),
-            };
+            // const query: CategoryQueryDto = {
+            //     ...(req.query.page !== undefined && { page: req.query.page, }),
+            //     ...(req.query.limit !== undefined && { limit: req.query.limit, }),
+            //     ...(req.query.search !== undefined && { search: req.query.search, }),
+            //     ...(req.query.parentId !== undefined && { parentId: req.query.parentId, }),
+            //     ...(req.query.isActive !== undefined && { isActive: req.query.isActive === "true", }),
+            //     ...(req.query.sortBy !== undefined && { sortBy: req.query.sortBy, }),
+            //     ...(req.query.order !== undefined && { order: req.query.order === "asc" ? "asc" : "desc", }),
+            // };
 
-            const categories = await categoryService.findMany(categoryQuerySchema.parse(query));
+            const query = res.locals.query as CategoryQueryDto;
+
+            const categories = await categoryService.findMany(query);
 
             res.status(200).json({
                 success: true,
                 ...categories,
             });
         } catch (error) {
+            console.log(error)
             next(error);
         }
     }
