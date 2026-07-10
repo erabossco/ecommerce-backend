@@ -3,6 +3,7 @@ import { describe, it, expect } from "vitest";
 import app from "@/app.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 import { createId } from "@paralleldrive/cuid2";
+import type { Category } from "@prisma/client";
 
 describe("Category API", () => {
 
@@ -18,6 +19,7 @@ describe("Category API", () => {
     }
 
     let result: Partial<Result> = {};
+    let parentId: string = "";
     let childId: string = "";
 
     // ==========================
@@ -45,6 +47,7 @@ describe("Category API", () => {
                 description: response.body.data.description,
                 isActive: response.body.data.isActive,
             };
+            parentId = result.id as string;
 
             expect(response.status).toBe(201);
             expect(response.body.success).toBe(true);
@@ -150,6 +153,7 @@ describe("Category API", () => {
 
     describe("GET /categories/:id", () => {
 
+        // find category by id
         it("should find a category by id", async () => {
             const id = result.id;
             const response = await request(app)
@@ -175,7 +179,7 @@ describe("Category API", () => {
 
     describe("GET /categories", () => {
 
-        // Get categoriest
+        // Get categories
         it("should get all categories", async () => {
             const response = await request(app)
                 .get(categoryEndPoint);
@@ -189,12 +193,108 @@ describe("Category API", () => {
         it("should paginate categories", async () => {
             const response = await request(app)
                 .get(`${categoryEndPoint}?page=1&limit=2`);
-            console.log(response.body)
+
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
             expect(response.body.data).toHaveLength(2);
+            expect(response.body.meta.total).toBeGreaterThanOrEqual(2);
+            expect(response.body.meta.page).toBeGreaterThan(0);
         });
 
+        // Search category by name
+        it("should search category by name", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?search=test-`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.length).toBeGreaterThan(0);
+            expect(response.body.meta.page).toBeGreaterThan(0);
+            response.body.data.forEach((category: Category) => {
+                expect(category.name).toContain("test-");
+            });
+        });
+
+        // Search category by slug
+        it("should search category by name", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?search=test-`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.length).toBeGreaterThan(0);
+            expect(response.body.meta.page).toBeGreaterThan(0);
+            response.body.data.forEach((category: Category) => {
+                expect(category.slug).toContain("test-");
+            });
+        });
+
+        // Filter category by parent category id
+        it("should filter child-categories by parent category", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?parentId=${parentId}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toBeInstanceOf(Array);
+            response.body.data.forEach((category: Category) => {
+                expect(category.parentId).toBe(parentId);
+            });
+        });
+
+        // Filter category by active status
+        it("should filter category by active status", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?isActive=true`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toBeInstanceOf(Array);
+            response.body.data.forEach((category: Category) => {
+                expect(category.isActive).toBe(true);
+            });
+        });
+
+        // Filter category by inactive status 
+        it("should filter category by inactive status", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?isActive=false`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toBeInstanceOf(Array);
+            response.body.data.forEach((category: Category) => {
+                expect(category.isActive).toBe(false);
+            });
+        });
+
+        // Sorting categories by asc
+        it("should sort categories by asc", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?sortBy=name&order=asc`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toBeInstanceOf(Array);
+
+            const names = response.body.data.map((category: Category) => category.name);
+            const sortedNames = [...names].sort((a, b) => a.localeCompare(b));
+            expect(names).toEqual(sortedNames);
+        });
+
+        // Sorting categories by desc
+        it("should sort categories by desc", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?sortBy=name&order=desc`)
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toBeInstanceOf(Array);
+
+            const names = response.body.data.map((category: Category) => category.name);
+            const sortedNames = [...names].sort((a, b) => b.localeCompare(a));
+            expect(names).toEqual(sortedNames);
+        });
 
     });
 
