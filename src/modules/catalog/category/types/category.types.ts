@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { Prisma } from "@prisma/client";
-import { CategoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
+
+import { categoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
 
 export type CreateCategoryDto = z.infer<typeof createCategorySchema>;
 
 export type UpdateCategoryDto = z.infer<typeof updateCategorySchema>;
 
-export type CategoryQueryDto = z.infer<typeof CategoryQuerySchema>
+export type CategoryQueryDto = z.infer<typeof categoryQuerySchema>
 
 
 export interface ListResult<T> {

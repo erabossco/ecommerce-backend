@@ -296,6 +296,50 @@ describe("Category API", () => {
             expect(names).toEqual(sortedNames);
         });
 
+        // Reject invalid page query
+        it("should reject invalid page query", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?page=-1`)
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_PAGE_NUMBER);
+        });
+
+        // Reject invalid limit
+        it("should reject invalid limit", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?limit=0`);
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_LIMIT);
+        });
+
+        // Reject invalid sort query
+        it("should reject invalid sortBy field", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?sortBy=you`);
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_SORTBY);
+        });
+
+        // Reject invalid parent id
+        it("should reject invalid parent id", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?parentId=hello`);
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_PARENT_ID);
+        });
+
     });
 
 

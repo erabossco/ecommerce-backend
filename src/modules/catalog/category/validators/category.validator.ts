@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CATEGORY } from "../constants/category.constants.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 
 
 // =============================
@@ -126,37 +127,44 @@ export const updateCategorySchema = z.object({
 export const categoryQuerySchema = z.object({
     page: z
         .coerce
-        .number()
-        .int()
-        .positive()
+        .number({ error: ERROR_MESSAGES.INVALID_PAGE_NUMBER })
+        .int({ error: ERROR_MESSAGES.INVALID_PAGE_NUMBER })
+        .positive({ error: ERROR_MESSAGES.INVALID_PAGE_NUMBER })
         .optional(),
 
     limit: z
         .coerce
-        .number()
-        .int()
-        .positive()
+        .number({ error: ERROR_MESSAGES.INVALID_CATEGORY_LIMIT })
+        .int({ error: ERROR_MESSAGES.INVALID_CATEGORY_LIMIT })
+        .positive({ error: ERROR_MESSAGES.INVALID_CATEGORY_LIMIT })
         .optional(),
 
     search: z
-        .string()
+        .string({ error: ERROR_MESSAGES.INVALID_CATEGORY_SEARCH })
         .trim()
         .optional(),
 
     parentId: z
-        .string()
+        .string({ error: ERROR_MESSAGES.INVALID_PARENT_ID })
         .trim()
-        .nullable()
+        .regex(
+            /^[a-z][a-z0-9]{23}$/,
+            {
+                error: ERROR_MESSAGES.INVALID_PARENT_ID,
+            }
+        )
         .optional(),
 
     isActive: z
-        .enum(["true", "false"])
+        .enum(["true", "false"], { error: ERROR_MESSAGES.INVALID_CATEGORY_ACTIVE_STATUS })
         .transform(val => val === "true")
         .optional(),
 
-    sortBy: z.string().trim().optional(),
+    sortBy: z
+        .enum(["name", "slug", "createdAt", "sortOrder"], { error: ERROR_MESSAGES.INVALID_CATEGORY_SORTBY })
+        .optional(),
 
     order: z
-        .enum(["asc", "desc"])
+        .enum(["asc", "desc"], { error: ERROR_MESSAGES.INVALID_CATEGORY_ORDER })
         .optional()
 });
