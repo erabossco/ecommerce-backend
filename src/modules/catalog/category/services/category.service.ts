@@ -4,7 +4,7 @@ import type { Category } from "@prisma/client";
 import { categoryRepository } from "../repositories/category.repository.js";
 import type { CategoryQueryDto, CreateCategoryDto, ListResult, UpdateCategoryDto, } from "../types/category.types.js";
 import { ConflictError, NotFoundError, BadRequestError } from "@/shared/errors/index.js";
-import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
+import { CATEGORY_ERRORS } from "../constants/error-messages.js";
 
 class CategoryService {
 
@@ -16,13 +16,13 @@ class CategoryService {
         const existingName = await categoryRepository.findByName(data.name);
 
         if (existingName) {
-            throw new ConflictError(ERROR_MESSAGES.CATEGORY_NAME_EXISTS);
+            throw new ConflictError(CATEGORY_ERRORS.CATEGORY_NAME_EXISTS);
         }
 
         const existingSlug = await categoryRepository.findBySlug(data.slug);
 
         if (existingSlug) {
-            throw new ConflictError(ERROR_MESSAGES.CATEGORY_SLUG_EXISTS);
+            throw new ConflictError(CATEGORY_ERRORS.CATEGORY_SLUG_EXISTS);
         }
 
         // VERY IMPORTANT
@@ -35,10 +35,10 @@ class CategoryService {
             const parent = await categoryRepository.findById(data.parentId);
 
             if (!parent) {
-                throw new NotFoundError(ERROR_MESSAGES.PARENT_CATEGORY_NOT_FOUND);
+                throw new NotFoundError(CATEGORY_ERRORS.PARENT_CATEGORY_NOT_FOUND);
             }
             if (parent.deletedAt) {
-                throw new BadRequestError(ERROR_MESSAGES.PARENT_CATEGORY_DELETED)
+                throw new BadRequestError(CATEGORY_ERRORS.PARENT_CATEGORY_DELETED)
             }
         }
 
@@ -53,7 +53,7 @@ class CategoryService {
     async findById(id: string): Promise<Category> {
         const category = await categoryRepository.findById(id);
         if (!category) {
-            throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+            throw new NotFoundError(CATEGORY_ERRORS.CATEGORY_NOT_FOUND);
         }
         return category;
     }
@@ -130,14 +130,14 @@ class CategoryService {
         const category = await categoryRepository.findById(id);
 
         if (!category) {
-            throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+            throw new NotFoundError(CATEGORY_ERRORS.CATEGORY_NOT_FOUND);
         }
 
         if (data.name) {
             const existing = await categoryRepository.findByName(data.name);
 
             if (existing && existing.id !== id) {
-                throw new ConflictError(ERROR_MESSAGES.CATEGORY_NAME_EXISTS);
+                throw new ConflictError(CATEGORY_ERRORS.CATEGORY_NAME_EXISTS);
             }
         }
 
@@ -145,7 +145,7 @@ class CategoryService {
             const existing = await categoryRepository.findBySlug(data.slug);
 
             if (existing && existing.id !== id) {
-                throw new ConflictError(ERROR_MESSAGES.CATEGORY_SLUG_EXISTS);
+                throw new ConflictError(CATEGORY_ERRORS.CATEGORY_SLUG_EXISTS);
             }
         }
 
@@ -154,11 +154,11 @@ class CategoryService {
                 const parent = await categoryRepository.findById(data.parentId);
 
                 if (!parent) {
-                    throw new NotFoundError(ERROR_MESSAGES.PARENT_CATEGORY_NOT_FOUND);
+                    throw new NotFoundError(CATEGORY_ERRORS.PARENT_CATEGORY_NOT_FOUND);
                 }
 
                 if (parent.id === id) {
-                    throw new BadRequestError(ERROR_MESSAGES.CATEGORY_SELF_PARENT);
+                    throw new BadRequestError(CATEGORY_ERRORS.CATEGORY_SELF_PARENT);
                 }
             }
         }
@@ -174,12 +174,12 @@ class CategoryService {
         const category = await categoryRepository.findById(id);
 
         if (!category) {
-            throw new NotFoundError(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+            throw new NotFoundError(CATEGORY_ERRORS.CATEGORY_NOT_FOUND);
         }
 
         const children = await categoryRepository.hasChildren(id);
         if (children) {
-            throw new ConflictError(ERROR_MESSAGES.CATEGORY_HAS_CHILDREN);
+            throw new ConflictError(CATEGORY_ERRORS.CATEGORY_HAS_CHILDREN);
         }
 
         return categoryRepository.delete(id);

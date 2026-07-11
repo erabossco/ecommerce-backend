@@ -1,4 +1,4 @@
-export const ERROR_MESSAGES = {
+export const CATEGORY_ERRORS = {
     // App error
 
     CATEGORY_NOT_FOUND: "Category not found.",
@@ -8,11 +8,9 @@ export const ERROR_MESSAGES = {
     CATEGORY_SELF_PARENT: "A category cannot be its own parent.",
     CATEGORY_HAS_CHILDREN: "Category has children.",
     PARENT_CATEGORY_DELETED: "Parent category was deleted.",
-    INTERNAL_SERVER_ERROR: "Internal server error.",
 
     // Validation error
     INVALID_CATEGORY_ID: "Invalid category id",
-    VALIDATION_FAILED: "Validation failed.",
     INVALID_PAGE_NUMBER: "Invalid page number.",
     INVALID_CATEGORY_LIMIT: "Invalid category limit.",
     INVALID_CATEGORY_SEARCH: "Invalid category search.",

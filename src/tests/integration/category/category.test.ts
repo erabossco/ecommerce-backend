@@ -1,10 +1,10 @@
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 import app from "@/app.js";
-import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
+import { CATEGORY_ERRORS } from "@/modules/catalog/category/constants/error-messages.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 import { createId } from "@paralleldrive/cuid2";
 import type { Category } from "@prisma/client";
-import type { CategoryIdDto } from "@/modules/catalog/category/types/category.types.js";
 
 describe("Category API", () => {
 
@@ -91,13 +91,14 @@ describe("Category API", () => {
             const response = await request(app)
                 .post(categoryEndPoint)
                 .send({
-                    name: result.name,
+                    name: result.name!,
                     slug: "test-another-slug",
                 });
 
+            console.log(response.error)
             expect(response.status).toBe(409);
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toBe(ERROR_MESSAGES.CATEGORY_NAME_EXISTS);
+            expect(response.body.message).toBe(CATEGORY_ERRORS.CATEGORY_NAME_EXISTS);
         });
 
 
@@ -112,7 +113,7 @@ describe("Category API", () => {
 
             expect(response.status).toBe(409);
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toBe(ERROR_MESSAGES.CATEGORY_SLUG_EXISTS);
+            expect(response.body.message).toBe(CATEGORY_ERRORS.CATEGORY_SLUG_EXISTS);
         });
 
 
@@ -128,7 +129,7 @@ describe("Category API", () => {
 
             expect(response.status).toBe(404);
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toBe(ERROR_MESSAGES.PARENT_CATEGORY_NOT_FOUND);
+            expect(response.body.message).toBe(CATEGORY_ERRORS.PARENT_CATEGORY_NOT_FOUND);
         });
 
 
@@ -172,18 +173,18 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
+            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_CATEGORY_ID);
         });
 
         // sending validated but non-existing id will return 404
         it("should return 404 for schema validated but non-existing id", async () => {
-            const id = "abc" + result.id?.slice(3);
+            const id = createId();
             const response = await request(app)
                 .get(`${categoryEndPoint}/${id}`);
 
             expect(response.status).toBe(404);
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toBe(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+            expect(response.body.message).toBe(CATEGORY_ERRORS.CATEGORY_NOT_FOUND);
             expect(response.body).not.haveOwnProperty("errors");
         });
     });
@@ -320,7 +321,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_PAGE_NUMBER);
+            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_PAGE_NUMBER);
         });
 
         // Reject invalid limit
@@ -331,7 +332,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_LIMIT);
+            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_CATEGORY_LIMIT);
         });
 
         // Reject invalid sort query
@@ -342,7 +343,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_SORTBY);
+            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_CATEGORY_SORTBY);
         });
 
         // Reject invalid parent id
@@ -353,7 +354,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_PARENT_ID);
+            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_PARENT_ID);
         });
 
         // Return empty array when no search matches
@@ -402,14 +403,14 @@ describe("Category API", () => {
 
         // Reject update for non-existing id
         it("should reject updating a category with false id", async () => {
-            const id = "abc" + result.id?.slice(3);
+            const id = createId();
             const response = await request(app)
                 .patch(`${categoryEndPoint}/${id}`)
                 .send({ name: "test new category" });
 
             expect(response.status).toBe(404);
             expect(response.body.success).toBe(false);
-            expect(response.body.message).toBe(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+            expect(response.body.message).toBe(CATEGORY_ERRORS.CATEGORY_NOT_FOUND);
         });
 
         // Reject update for invalid catory id 
@@ -421,7 +422,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
+            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_CATEGORY_ID);
         });
     });
 

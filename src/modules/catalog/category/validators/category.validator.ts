@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { CATEGORY } from "../constants/category.constants.js";
-import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
+import { CATEGORY_ERRORS } from "../constants/error-messages.js";
 
 
 // ======================
@@ -11,12 +11,12 @@ import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 export const categoryIdSchema = z.object({
     // z.cuid2() is not working so used regex
     id: z
-        .string({ error: ERROR_MESSAGES.INVALID_CATEGORY_ID })
+        .string({ error: CATEGORY_ERRORS.INVALID_CATEGORY_ID })
         .trim()
         .regex(
             /^[a-z][a-z0-9]{23}$/,
             {
-                error: ERROR_MESSAGES.INVALID_CATEGORY_ID,
+                error: CATEGORY_ERRORS.INVALID_CATEGORY_ID,
             }
         )
 });
@@ -145,46 +145,46 @@ export const updateCategorySchema = z.object({
 export const categoryQuerySchema = z.object({
     page: z
         .coerce
-        .number({ error: ERROR_MESSAGES.INVALID_PAGE_NUMBER })
-        .int({ error: ERROR_MESSAGES.INVALID_PAGE_NUMBER })
-        .positive({ error: ERROR_MESSAGES.INVALID_PAGE_NUMBER })
+        .number({ error: CATEGORY_ERRORS.INVALID_PAGE_NUMBER })
+        .int({ error: CATEGORY_ERRORS.INVALID_PAGE_NUMBER })
+        .positive({ error: CATEGORY_ERRORS.INVALID_PAGE_NUMBER })
         .optional(),
 
     limit: z
         .coerce
-        .number({ error: ERROR_MESSAGES.INVALID_CATEGORY_LIMIT })
-        .int({ error: ERROR_MESSAGES.INVALID_CATEGORY_LIMIT })
-        .positive({ error: ERROR_MESSAGES.INVALID_CATEGORY_LIMIT })
+        .number({ error: CATEGORY_ERRORS.INVALID_CATEGORY_LIMIT })
+        .int({ error: CATEGORY_ERRORS.INVALID_CATEGORY_LIMIT })
+        .positive({ error: CATEGORY_ERRORS.INVALID_CATEGORY_LIMIT })
         .optional(),
 
     search: z
-        .string({ error: ERROR_MESSAGES.INVALID_CATEGORY_SEARCH })
+        .string({ error: CATEGORY_ERRORS.INVALID_CATEGORY_SEARCH })
         .trim()
         .optional(),
 
 
     // z.cuid2() is not working so used regex
     parentId: z
-        .string({ error: ERROR_MESSAGES.INVALID_PARENT_ID })
+        .string({ error: CATEGORY_ERRORS.INVALID_PARENT_ID })
         .trim()
         .regex(
             /^[a-z][a-z0-9]{23}$/,
             {
-                error: ERROR_MESSAGES.INVALID_PARENT_ID,
+                error: CATEGORY_ERRORS.INVALID_PARENT_ID,
             }
         )
         .optional(),
 
     isActive: z
-        .enum(["true", "false"], { error: ERROR_MESSAGES.INVALID_CATEGORY_ACTIVE_STATUS })
+        .enum(["true", "false"], { error: CATEGORY_ERRORS.INVALID_CATEGORY_ACTIVE_STATUS })
         .transform(val => val === "true")
         .optional(),
 
     sortBy: z
-        .enum(["name", "slug", "createdAt", "sortOrder"], { error: ERROR_MESSAGES.INVALID_CATEGORY_SORTBY })
+        .enum(["name", "slug", "createdAt", "sortOrder"], { error: CATEGORY_ERRORS.INVALID_CATEGORY_SORTBY })
         .optional(),
 
     order: z
-        .enum(["asc", "desc"], { error: ERROR_MESSAGES.INVALID_CATEGORY_ORDER })
+        .enum(["asc", "desc"], { error: CATEGORY_ERRORS.INVALID_CATEGORY_ORDER })
         .optional()
 });

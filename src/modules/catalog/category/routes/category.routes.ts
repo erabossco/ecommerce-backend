@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { categoryController } from "../controllers/category.controller.js";
-import { validateCategoryId, validateCategoryQuery } from "@/shared/middlewares/validate-category.middleware.js";
+import { validateCategoryId, validateCategoryQuery } from "../validators/validate-category.middleware.js";
 import { categoryIdSchema, categoryQuerySchema } from "../validators/category.validator.js";
 
 const router = Router();

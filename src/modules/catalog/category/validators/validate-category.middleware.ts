@@ -1,6 +1,6 @@
 import { ZodType } from "zod";
 import type { Request, Response, NextFunction } from "express";
-import type { CategoryIdDto, CategoryQueryDto } from "@/modules/catalog/category/types/category.types.js";
+import type { CategoryIdDto, CategoryQueryDto } from "../types/category.types.js";
 
 // ================================
 // CATEGORY VALIDATION MIDDLEWARES 
