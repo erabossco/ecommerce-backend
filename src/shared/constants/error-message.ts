@@ -11,6 +11,7 @@ export const ERROR_MESSAGES = {
     INTERNAL_SERVER_ERROR: "Internal server error.",
 
     // Validation error
+    INVALID_CATEGORY_ID: "Invalid category id",
     VALIDATION_FAILED: "Validation failed.",
     INVALID_PAGE_NUMBER: "Invalid page number.",
     INVALID_CATEGORY_LIMIT: "Invalid category limit.",

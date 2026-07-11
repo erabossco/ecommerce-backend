@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-import { categoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
+import { categoryIdSchema, categoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
+
+export type CategoryIdDto = z.infer<typeof categoryIdSchema>
 
 export type CreateCategoryDto = z.infer<typeof createCategorySchema>;
 

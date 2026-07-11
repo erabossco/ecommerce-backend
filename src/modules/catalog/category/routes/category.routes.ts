@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { categoryController } from "../controllers/category.controller.js";
-import { validateCategoryQuery } from "@/shared/middlewares/validate-category-query.js";
-import { categoryQuerySchema } from "../validators/category.validator.js";
+import { validateCategoryId, validateCategoryQuery } from "@/shared/middlewares/validate-category.middleware.js";
+import { categoryIdSchema, categoryQuerySchema } from "../validators/category.validator.js";
 
 const router = Router();
 
@@ -13,7 +13,9 @@ const router = Router();
 
 router.post("/", categoryController.create);
 
-router.get("/:id", categoryController.findById);
+router.get("/:id",
+    validateCategoryId(categoryIdSchema),
+    categoryController.findById);
 
 router.get("/",
     validateCategoryQuery(categoryQuerySchema),

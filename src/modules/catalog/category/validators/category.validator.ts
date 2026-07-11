@@ -4,6 +4,24 @@ import { CATEGORY } from "../constants/category.constants.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 
 
+// ======================
+// CATEGORY ID SCHEMA
+// ======================
+
+export const categoryIdSchema = z.object({
+    // z.cuid2() is not working so used regex
+    id: z
+        .string({ error: ERROR_MESSAGES.INVALID_CATEGORY_ID })
+        .trim()
+        .regex(
+            /^[a-z][a-z0-9]{23}$/,
+            {
+                error: ERROR_MESSAGES.INVALID_CATEGORY_ID,
+            }
+        )
+});
+
+
 // =============================
 // CREATE CATEGORY SCHEMA
 // =============================
@@ -144,6 +162,8 @@ export const categoryQuerySchema = z.object({
         .trim()
         .optional(),
 
+
+    // z.cuid2() is not working so used regex
     parentId: z
         .string({ error: ERROR_MESSAGES.INVALID_PARENT_ID })
         .trim()

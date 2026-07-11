@@ -4,6 +4,7 @@ import app from "@/app.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-message.js";
 import { createId } from "@paralleldrive/cuid2";
 import type { Category } from "@prisma/client";
+import type { CategoryIdDto } from "@/modules/catalog/category/types/category.types.js";
 
 describe("Category API", () => {
 
@@ -164,11 +165,14 @@ describe("Category API", () => {
         });
 
         // sending false id will return 404
-        it("should return 404 for non existing category", async () => {
+        it("should return 400 for non existing category", async () => {
             const response = await request(app)
-                .get(`${categoryEndPoint}/falseid`)
+                .get(`${categoryEndPoint}/falseid`);
 
-            expect(response.status).toBe(404);
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
         });
     });
 
@@ -345,7 +349,6 @@ describe("Category API", () => {
             const response = await request(app)
                 .get(`${categoryEndPoint}?search=gold-computer`);
 
-            console.log(response.body.meta)
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
             expect(response.body.data).toEqual([]);
