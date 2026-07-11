@@ -11,3 +11,5 @@ router.post("/",
     validateBrandBody(createBrandSchema),
     brandController.create
 );
+
+export const brandRouter = router;
