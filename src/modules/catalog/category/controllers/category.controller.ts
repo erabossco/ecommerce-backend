@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { categoryService } from "../services/category.service.js";
 import { createCategorySchema, updateCategorySchema } from "../validators/category.validator.js";
-import type { CategoryQueryDto } from "../types/category.types.js";
+import type { CategoryQueryDto, CreateCategoryDto, UpdateCategoryDto } from "../types/category.types.js";
 
 class CategoryController {
 
@@ -11,7 +11,7 @@ class CategoryController {
 
     async create(req: Request, res: Response, next: NextFunction,): Promise<void> {
         try {
-            const data = createCategorySchema.parse(req.body);
+            const data = res.locals.body as CreateCategoryDto;
             const category = await categoryService.create(data);
             res.status(201).json({
                 success: true,
@@ -64,7 +64,7 @@ class CategoryController {
 
     async update(req: Request, res: Response, next: NextFunction,): Promise<void> {
         try {
-            const data = updateCategorySchema.parse(req.body);
+            const data = res.locals.body as UpdateCategoryDto;
             const category = await categoryService.update(
                 req.params.id as string,
                 data,

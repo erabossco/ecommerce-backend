@@ -35,3 +35,15 @@ export const validateCategoryId = (schema: ZodType) => {
         }
     }
 }
+
+// Validate request body for category create/update operations
+export const validateCategoryBody = (schema: ZodType) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        try {
+            res.locals.body = schema.parse(req.body);
+            next();
+        } catch (error) {
+            next(error);
+        }
+    }
+}
