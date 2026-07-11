@@ -95,7 +95,6 @@ describe("Category API", () => {
                     slug: "test-another-slug",
                 });
 
-            console.log(response.error)
             expect(response.status).toBe(409);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(CATEGORY_ERRORS.CATEGORY_NAME_EXISTS);

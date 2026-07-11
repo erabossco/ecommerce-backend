@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { categoryService } from "../services/category.service.js";
-import { categoryQuerySchema, createCategorySchema, updateCategorySchema } from "../validators/category.validator.js";
+import { createCategorySchema, updateCategorySchema } from "../validators/category.validator.js";
 import type { CategoryQueryDto } from "../types/category.types.js";
 
 class CategoryController {
@@ -19,7 +19,6 @@ class CategoryController {
                 data: category,
             });
         } catch (error) {
-            console.log(error);
             next(error);
         }
     }
