@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { CATEGORY } from "../constants/category.constants.js";
-import { CATEGORY_ERRORS } from "../constants/error-messages.js";
+import { CATEGORY_ERRORS } from "../errors/category-errors.js";
 
 
 // ======================

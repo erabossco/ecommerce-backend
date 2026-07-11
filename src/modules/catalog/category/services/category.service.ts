@@ -4,7 +4,7 @@ import type { Category } from "@prisma/client";
 import { categoryRepository } from "../repositories/category.repository.js";
 import type { CategoryQueryDto, CreateCategoryDto, ListResult, UpdateCategoryDto, } from "../types/category.types.js";
 import { ConflictError, NotFoundError, BadRequestError } from "@/shared/errors/index.js";
-import { CATEGORY_ERRORS } from "../constants/error-messages.js";
+import { CATEGORY_ERRORS } from "../errors/category-errors.js";
 
 class CategoryService {
 

@@ -1,7 +1,7 @@
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 import app from "@/app.js";
-import { CATEGORY_ERRORS } from "@/modules/catalog/category/constants/error-messages.js";
+import { CATEGORY_ERRORS } from "@/modules/catalog/category/errors/category-errors.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 import { createId } from "@paralleldrive/cuid2";
 import type { Category } from "@prisma/client";
