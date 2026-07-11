@@ -39,6 +39,15 @@ afterAll(async () => {
         }
     });
 
+    // delete test brand
+    await prisma.brand.deleteMany({
+        where: {
+            name: {
+                startsWith: "test-"
+            }
+        }
+    })
+
 
     await prisma.$disconnect();
 });
