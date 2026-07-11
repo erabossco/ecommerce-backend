@@ -340,6 +340,20 @@ describe("Category API", () => {
             expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_PARENT_ID);
         });
 
+        // Return empty array when no search matches
+        it("should return an empty array when no search matches", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}?search=gold-computer`);
+
+            console.log(response.body.meta)
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data).toEqual([]);
+            expect(response.body.meta.total).toBe(0);
+            expect(response.body.meta.totalPages).toBe(0);
+        });
+
+
     });
 
 
