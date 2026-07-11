@@ -21,8 +21,12 @@ router.get("/",
     validateCategoryQuery(categoryQuerySchema),
     categoryController.findMany);
 
-router.patch("/:id", categoryController.update);
+router.patch("/:id",
+    validateCategoryId(categoryIdSchema),
+    categoryController.update);
 
-router.delete("/:id", categoryController.delete);
+router.delete("/:id",
+    validateCategoryId(categoryIdSchema),
+    categoryController.delete);
 
 export const categoryRouter = router;
