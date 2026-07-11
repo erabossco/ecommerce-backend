@@ -164,15 +164,26 @@ describe("Category API", () => {
             expect(response.body.data).toMatchObject(result);
         });
 
-        // sending false id will return 404
-        it("should return 400 for non existing category", async () => {
+        // sending invalid id will return validation error with 400
+        it("should return validation error for invalid id", async () => {
             const response = await request(app)
-                .get(`${categoryEndPoint}/falseid`);
+                .get(`${categoryEndPoint}/falseid-not-like-cuid2`);
 
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
             expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
+        });
+
+        // sending validated but non-existing id will return 404
+        it("should return 404 for schema validated but non-existing id", async () => {
+            const response = await request(app)
+                .get(`${categoryEndPoint}/${"abc" + result.id?.slice(3)}`);
+
+            expect(response.status).toBe(404);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+            expect(response.body).not.haveOwnProperty("errors");
         });
     });
 
