@@ -177,8 +177,9 @@ describe("Category API", () => {
 
         // sending validated but non-existing id will return 404
         it("should return 404 for schema validated but non-existing id", async () => {
+            const id = "abc" + result.id?.slice(3);
             const response = await request(app)
-                .get(`${categoryEndPoint}/${"abc" + result.id?.slice(3)}`);
+                .get(`${categoryEndPoint}/${id}`);
 
             expect(response.status).toBe(404);
             expect(response.body.success).toBe(false);
@@ -397,6 +398,30 @@ describe("Category API", () => {
             expect(response.body.data.imageUrl).toBeDefined();
             expect(response.body.data).toMatchObject(updatePayload);
             expect(response.body.data).not.toMatchObject(result);
+        });
+
+        // Reject update for non-existing id
+        it("should reject updating a category with false id", async () => {
+            const id = "abc" + result.id?.slice(3);
+            const response = await request(app)
+                .patch(`${categoryEndPoint}/${id}`)
+                .send({ name: "test new category" });
+
+            expect(response.status).toBe(404);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.CATEGORY_NOT_FOUND);
+        });
+
+        // Reject update for invalid catory id 
+        it("should return 400 for schema not-validated id", async () => {
+            const response = await request(app)
+                .patch(`${categoryEndPoint}/simple-id`)
+                .send({ name: "test new category name" });
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
         });
     });
 
