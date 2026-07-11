@@ -227,8 +227,8 @@ model Product {
 model Brand {
   id String @id @default(cuid(2))
 
-  name        String
-  slug        String
+  name        String  @unique
+  slug        String  @unique
   description String?
 
   logoUrl String?
