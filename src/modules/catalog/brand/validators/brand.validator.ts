@@ -4,12 +4,14 @@ export const createBrandSchema = z.object({
     name: z
         .string({ error: BRAND_ERRORS.INVALID_BRAND_NAME })
         .trim()
-        .min(1, { error: BRAND_ERRORS.INVALID_NAME_LIMIT })
+        .min(2, { error: BRAND_ERRORS.INVALID_NAME_LIMIT })
         .max(50, { error: BRAND_ERRORS.INVALID_NAME_LIMIT }),
 
     slug: z
         .string({ error: BRAND_ERRORS.INVALID_BRAND_SLUG })
-        .trim(),
+        .trim()
+        .min(2, { error: BRAND_ERRORS.INVALID_SLUG_LIMIT })
+        .max(50, { error: BRAND_ERRORS.INVALID_SLUG_LIMIT }),
 
     description: z
         .string({ error: BRAND_ERRORS.INVALID_BRAND_DESCRIPTION })
