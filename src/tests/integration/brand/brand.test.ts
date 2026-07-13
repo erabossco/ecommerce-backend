@@ -109,6 +109,23 @@ describe("BRAND API", () => {
             expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_NAME_LIMIT);
         });
 
+        // Reject if brand name exceeds maximum length, and throw validation error 400
+        it("should reject when brand name exceeds maximum length", async () => {
+            const payload = {
+                name: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                slug: "test-slug"
+            };
+
+            const response = await request(app)
+                .post(apiEndPoint)
+                .send(payload);
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_NAME_LIMIT);
+        });
+
         // Invalid slug will throw validation error 400
         it("should reject invalid brand slug", async () => {
             const payload = {
@@ -131,6 +148,23 @@ describe("BRAND API", () => {
             const payload = {
                 name: "test-brand-name-6",
                 slug: "t"
+            };
+
+            const response = await request(app)
+                .post(apiEndPoint)
+                .send(payload);
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_SLUG_LIMIT);
+        });
+
+        // Reject if brand slug exceeds maximum length, and throw validation error 400
+        it("should reject when brand slug exceeds maximum length", async () => {
+            const payload = {
+                name: "test-brand-name-6",
+                slug: "test-slugggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
             };
 
             const response = await request(app)
