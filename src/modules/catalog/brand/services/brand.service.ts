@@ -3,6 +3,7 @@ import { brandRepository } from "../repositories/brand.repository.js";
 import type { CreateBrandDto } from "../types/brand.types.js";
 import { ConflictError } from "@/shared/errors/conflict.error.js";
 import { BRAND_ERRORS } from "../errors/brand-errors.js";
+import { NotFoundError } from "@/shared/errors/not-found.error.js";
 
 class BrandService {
 
@@ -28,6 +29,16 @@ class BrandService {
             ...(data.description !== undefined && { description: data.description }),
             ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
         });
+    }
+
+    // ================
+    // FIND BRAND BY ID
+    // ================
+
+    async findById(id: string): Promise<Brand> {
+        const brand = await brandRepository.findById(id);
+        if (!brand) throw new NotFoundError(BRAND_ERRORS.BRAND_NOT_FOUND);
+        return brand;
     }
 }
 

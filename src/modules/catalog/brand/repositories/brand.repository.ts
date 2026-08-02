@@ -28,6 +28,16 @@ class BrandRepository {
             }
         });
     }
+
+    // Find brand by id
+    async findById(id: string): Promise<Brand | null> {
+        return await prisma.brand.findUnique({
+            where: {
+                id,
+            }
+        });
+
+    }
 }
 
 export const brandRepository = new BrandRepository();

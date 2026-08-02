@@ -179,5 +179,17 @@ describe("BRAND API", () => {
 
     });
 
+    describe("GET /brands", () => {
+        it("should find a brand by id", async () => {
+            const id = result.id;
+            const response = await request(app)
+                .get(`${apiEndPoint}/${id}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.id).toBe(id);
+
+        })
+    });
 
 });

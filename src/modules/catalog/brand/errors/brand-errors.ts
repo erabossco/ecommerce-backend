@@ -5,7 +5,10 @@ export const BRAND_ERRORS = {
     INVALID_SLUG_LIMIT: "Brand slug must be within 2-50 characters.",
     INVALID_BRAND_DESCRIPTION: "Invalid brand description",
     INVALID_BRAND_LOGO_URL: "Invalid brand logo url",
+    INVALID_BRAND_ID: "Invalid brand id",
 
     BRAND_NAME_EXISTS: "Brand name exists.",
     BRAND_SLUG_EXISTS: "Brand slug exists",
+
+    BRAND_NOT_FOUND: "Brand name not found",
 } as const;

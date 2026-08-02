@@ -12,10 +12,10 @@ import type { CategoryIdDto, CategoryQueryDto } from "../types/category.types.js
 
 // Validate category query
 export const validateCategoryQuery =
-    (schema: ZodType) => {
+    (schema: ZodType<CategoryQueryDto>) => {
         return (req: Request, res: Response, next: NextFunction) => {
             try {
-                res.locals.query = schema.parse(req.query) as CategoryQueryDto;
+                res.locals.query = schema.parse(req.query);
                 next();
             } catch (error) {
                 next(error);
@@ -25,10 +25,10 @@ export const validateCategoryQuery =
 
 
 // Validate category id
-export const validateCategoryId = (schema: ZodType) => {
+export const validateCategoryId = (schema: ZodType<CategoryIdDto>) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
-            res.locals.params = schema.parse(req.params) as CategoryIdDto
+            res.locals.params = schema.parse(req.params);
             next();
         } catch (error) {
             next(error)
