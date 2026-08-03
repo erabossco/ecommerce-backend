@@ -36,8 +36,29 @@ class BrandRepository {
                 id,
             }
         });
-
     }
+    // Find many brands
+    async findMany(args?: Prisma.BrandFindManyArgs): Promise<Brand[]> {
+        return await prisma.brand.findMany({
+            ...args,
+            where: {
+                deletedAt: null,
+                ...args?.where,
+            }
+        });
+    }
+
+    // Count Brands
+    async count(args?: Prisma.BrandCountArgs): Promise<number> {
+        return await prisma.brand.count({
+            ...args,
+            where: {
+                deletedAt: null,
+                ...args?.where,
+            }
+        });
+    }
+
 }
 
 export const brandRepository = new BrandRepository();

@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { brandService } from "../services/brand.service.js";
-import type { CreateBrandDto } from "../types/brand.types.js";
+import type { BrandQueryDto, CreateBrandDto } from "../types/brand.types.js";
 import { BRAND_MESSAGES } from "../constants/brand.constants.js";
 
 class BrandController {
@@ -33,6 +33,25 @@ class BrandController {
             next(error);
         }
     }
+
+    // =================
+    // FIND BRAND LIST
+    // =================
+
+    async findMany(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const query = res.locals.query as BrandQueryDto;
+            const brands = await brandService.findMany(query);
+
+            res.status(200).json({
+                success: true,
+                ...brands,
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
+
 }
 
 export const brandController = new BrandController();

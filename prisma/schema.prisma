@@ -233,7 +233,8 @@ model Brand {
 
   logoUrl String?
 
-  isActive Boolean @default(true)
+  isActive  Boolean   @default(true)
+  deletedAt DateTime?
 
   products Product[]
 

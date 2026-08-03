@@ -1,6 +1,8 @@
 import { z } from "zod";
+import type { Category } from "@prisma/client";
 
 import { categoryIdSchema, categoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
+import type { PaginationMeta } from "@/shared/types/api-response.types.js";
 
 export type CategoryIdDto = z.infer<typeof categoryIdSchema>
 
@@ -10,17 +12,7 @@ export type UpdateCategoryDto = z.infer<typeof updateCategorySchema>;
 
 export type CategoryQueryDto = z.infer<typeof categoryQuerySchema>
 
-
-export interface ListResult<T> {
-    data: T[];
-    meta: {
-        page: number;
-        limit: number;
-        total: number;
-        totalPages: number;
-        hasPreviousPage: boolean;
-        hasNextPage: boolean;
-        previousPage: number | null;
-        nextPage: number | null;
-    };
+export interface CategoryList {
+    data: Category[],
+    meta: PaginationMeta,
 }

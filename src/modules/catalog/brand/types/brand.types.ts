@@ -1,6 +1,15 @@
 import z from "zod";
-import type { brandIdSchema, createBrandSchema } from "../validators/brand.validator.js";
+import type { brandIdSchema, brandQuerySchema, createBrandSchema } from "../validators/brand.validator.js";
+import type { Brand } from "@prisma/client";
+import type { PaginationMeta } from "@/shared/types/api-response.types.js";
 
 export type CreateBrandDto = z.infer<typeof createBrandSchema>;
 
 export type BrandIdDto = z.infer<typeof brandIdSchema>;
+
+export type BrandQueryDto = z.infer<typeof brandQuerySchema>;
+
+export interface BrandList {
+    data: Brand[],
+    meta: PaginationMeta,
+}
