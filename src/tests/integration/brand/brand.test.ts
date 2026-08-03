@@ -4,6 +4,7 @@ import app from "@/app.js";
 import { BRAND_MESSAGES } from "@/modules/catalog/brand/constants/brand.constants.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 import { BRAND_ERRORS } from "@/modules/catalog/brand/errors/brand-errors.js";
+import { createId } from "@paralleldrive/cuid2";
 
 
 
@@ -179,7 +180,11 @@ describe("BRAND API", () => {
 
     });
 
+
+    // GET BRANDS TEST
     describe("GET /brands", () => {
+
+        // Find brand by id
         it("should find a brand by id", async () => {
             const id = result.id;
             const response = await request(app)
@@ -189,7 +194,30 @@ describe("BRAND API", () => {
             expect(response.body.success).toBe(true);
             expect(response.body.data.id).toBe(id);
 
-        })
+        });
+
+        // Throw validation error for invalid id type, short length or over length id
+        it("should throw bad request error for invalid id", async () => {
+            const id = 123;
+            const response = await request(app)
+                .get(`${apiEndPoint}/${id}`);
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_BRAND_ID);
+        });
+
+        // Throw not found error for not-found id
+        it("should throw not found error for incorrect id", async () => {
+            const id = createId();
+            const response = await request(app)
+                .get(`${apiEndPoint}/${id}`);
+
+            expect(response.status).toBe(404);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(BRAND_ERRORS.BRAND_NOT_FOUND);
+        });
     });
 
 });
