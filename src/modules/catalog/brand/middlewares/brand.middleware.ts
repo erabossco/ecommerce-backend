@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import type { ZodType } from "zod";
-import type { BrandIdDto, BrandQueryDto, CreateBrandDto } from "../types/brand.types.js";
+import type { BrandIdDto, BrandQueryDto, CreateBrandDto, UpdateBrandDto } from "../types/brand.types.js";
 
 // VALIDATE BRAND BODY MIDDLEWARE
 
@@ -39,4 +39,17 @@ export const validateBrandQuery = (schema: ZodType<BrandQueryDto>) => {
             next(error);
         }
     }
-} 
+}
+
+// VALIDATE UPDATE BRAND BODY MIDDLEWARE
+
+export const validateBrandUpdate = (schema: ZodType<UpdateBrandDto>) => {
+    return (req: Request, res: Response, next: NextFunction) => {
+        try {
+            res.locals.body = schema.parse(req.body);
+            next();
+        } catch (error) {
+            next(error);
+        }
+    }
+}
