@@ -82,3 +82,41 @@ export const brandQuerySchema = z.object({
         .enum(["asc", "desc"], { error: BRAND_ERRORS.INVALID_BRAND_ORDER })
         .optional()
 });
+
+
+// ====================
+// UPDATE BRAND SCHEMA
+// ====================
+
+export const updateBrandSchema = z.object({
+    name: z
+        .string()
+        .trim()
+        .min(2, { error: BRAND_ERRORS.INVALID_NAME_LIMIT })
+        .max(50, { error: BRAND_ERRORS.INVALID_NAME_LIMIT })
+        .optional(),
+
+    slug: z
+        .string()
+        .trim()
+        .min(2, { error: BRAND_ERRORS.INVALID_SLUG_LIMIT })
+        .max(50, { error: BRAND_ERRORS.INVALID_SLUG_LIMIT })
+        .optional(),
+
+    description: z
+        .string({ error: BRAND_ERRORS.INVALID_BRAND_DESCRIPTION })
+        .trim()
+        .optional(),
+
+
+    logoUrl: z
+        .url({ error: BRAND_ERRORS.INVALID_BRAND_LOGO_URL })
+        .optional(),
+
+    isActive: z
+        .boolean()
+        .optional(),
+
+}).refine((data) => {
+    Object.keys(data).length > 0, { message: "At least one field must be provided for update" }
+});
