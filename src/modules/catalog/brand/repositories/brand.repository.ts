@@ -63,13 +63,7 @@ class BrandRepository {
     async update(id: string, data: Prisma.BrandUpdateInput): Promise<Brand> {
         return await prisma.brand.update({
             where: { id, },
-            data: {
-                ...(data.name !== undefined && { name: data.name }),
-                ...(data.slug !== undefined && { slug: data.slug }),
-                ...(data.description !== undefined && { description: data.description }),
-                ...(data.logoUrl !== undefined && { logoUrl: data.logoUrl }),
-                ...(data.isActive !== undefined && { isActive: data.isActive }),
-            }
+            data,
         })
     }
 
