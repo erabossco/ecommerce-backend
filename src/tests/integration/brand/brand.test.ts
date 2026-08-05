@@ -271,6 +271,32 @@ describe("BRAND API", () => {
             expect(response.body.data.id).toBe(id);
         });
 
+        // Reject and throw validation failed error for invalid name limit
+        it("should reject update for invalid brand name", async () => {
+            const id = result.id;
+            const data = { name: "a" };
+            const response = await request(app)
+                .patch(`${apiEndPoint}/${id}`)
+                .send(data);
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_NAME_LIMIT);
+        });
+
+        // Reject and throw validation failed error for invalid slug limit
+        it("should reject update for invalid brand slug", async () => {
+            const id = result.id;
+            const data = { slug: "a" };
+            const response = await request(app)
+                .patch(`${apiEndPoint}/${id}`)
+                .send(data);
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_SLUG_LIMIT);
+        });
+
     });
 
 });
