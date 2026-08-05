@@ -118,5 +118,5 @@ export const updateBrandSchema = z.object({
         .optional(),
 
 }).refine((data) => {
-    Object.keys(data).length > 0, { message: "At least one field must be provided for update" }
+    return Object.keys(data).length > 0, { message: "At least one field must be provided for update" }
 });
