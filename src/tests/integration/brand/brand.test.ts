@@ -254,6 +254,23 @@ describe("BRAND API", () => {
             expect(response.body.data.slug).toBe(data.slug);
             expect(response.body.data.id).toBe(id);
         });
+
+        // update brand name and slug by id
+        it("should update brand name slug by id", async () => {
+            const id = result.id;
+            const data = { name: "test- new name again", slug: "updated-slug-again" };
+            const response = await request(app)
+                .patch(`${apiEndPoint}/${id}`)
+                .send(data);
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toBe(BRAND_MESSAGES.BRAND_UPDATED);
+            expect(response.body.data.isActive).toBe(true);
+            expect(response.body.data.name).toBe(data.name);
+            expect(response.body.data.slug).toBe(data.slug);
+            expect(response.body.data.id).toBe(id);
+        });
+
     });
 
 });
