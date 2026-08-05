@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { brandService } from "../services/brand.service.js";
-import type { BrandQueryDto, CreateBrandDto } from "../types/brand.types.js";
+import type { BrandIdDto, BrandQueryDto, CreateBrandDto, UpdateBrandDto } from "../types/brand.types.js";
 import { BRAND_MESSAGES } from "../constants/brand.constants.js";
 
 class BrandController {
@@ -49,6 +49,28 @@ class BrandController {
             })
         } catch (error) {
             next(error);
+        }
+    }
+
+
+    // ==================
+    // UPDATE A BRAND
+    // ==================
+
+    async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = res.locals.params as BrandIdDto;
+            const data = res.locals.body as UpdateBrandDto;
+
+            const brand = await brandService.update(id, data);
+            res.status(200).json({
+                success: true,
+                message: BRAND_MESSAGES.BRAND_UPDATED,
+                data: brand
+            })
+
+        } catch (error) {
+            next(error)
         }
     }
 
