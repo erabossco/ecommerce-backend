@@ -6,20 +6,9 @@ import type { CreateCategoryDto, UpdateCategoryDto } from "../types/category.typ
 class CategoryRepository {
 
     // CREATE CATEGORY
-    async create(data: CreateCategoryDto): Promise<Category> {
+    async create(data: Prisma.CategoryCreateInput): Promise<Category> {
         return await prisma.category.create({
-            data: {
-                name: data.name,
-                slug: data.slug,
-                isActive: data.isActive,
-                sortOrder: data.sortOrder,
-
-                ...(data.description !== undefined && { description: data.description, }),
-                ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl, }),
-                ...(data.parentId !== undefined && { parentId: data.parentId, }),
-                ...(data.metaTitle !== undefined && { metaTitle: data.metaTitle, }),
-                ...(data.metaDescription !== undefined && { metaDescription: data.metaDescription, }),
-            }
+            data,
         });
     }
 
@@ -94,17 +83,10 @@ class CategoryRepository {
     }
 
     // UPDATE A CATEGORY
-    async update(id: string, data: UpdateCategoryDto): Promise<Category> {
+    async update(id: string, data: Prisma.CategoryUpdateInput): Promise<Category> {
         return await prisma.category.update({
             where: { id },
-            data: {
-                ...(data.name !== undefined && { name: data.name, }),
-                ...(data.slug !== undefined && { slug: data.slug, }),
-                ...(data.isActive !== undefined && { isActive: data.isActive, }),
-                ...(data.description !== undefined && { description: data.description, }),
-                ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl, }),
-                ...(data.parentId !== undefined && { parentId: data.parentId, }),
-            },
+            data,
         });
     }
 

@@ -65,8 +65,9 @@ class CategoryController {
     async update(req: Request, res: Response, next: NextFunction,): Promise<void> {
         try {
             const data = res.locals.body as UpdateCategoryDto;
+            const { id } = res.locals.params;
             const category = await categoryService.update(
-                req.params.id as string,
+                id,
                 data,
             );
 

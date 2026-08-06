@@ -42,7 +42,20 @@ class CategoryService {
             }
         }
 
-        return categoryRepository.create(data);
+        const inputData: Prisma.CategoryCreateInput = {
+            name: data.name,
+            slug: data.slug,
+            isActive: data.isActive,
+            sortOrder: data.sortOrder,
+
+            ...(data.description !== undefined && { description: data.description, }),
+            ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl, }),
+            ...(data.parentId !== undefined && { parentId: data.parentId, }),
+            ...(data.metaTitle !== undefined && { metaTitle: data.metaTitle, }),
+            ...(data.metaDescription !== undefined && { metaDescription: data.metaDescription, }),
+        }
+
+        return categoryRepository.create(inputData);
     }
 
 
@@ -163,7 +176,16 @@ class CategoryService {
             }
         }
 
-        return categoryRepository.update(id, data);
+        const updateData: Prisma.CategoryUpdateInput = {
+            ...(data.name !== undefined && { name: data.name, }),
+            ...(data.slug !== undefined && { slug: data.slug, }),
+            ...(data.isActive !== undefined && { isActive: data.isActive, }),
+            ...(data.description !== undefined && { description: data.description, }),
+            ...(data.imageUrl !== undefined && { imageUrl: data.imageUrl, }),
+            ...(data.parentId !== undefined && { parentId: data.parentId, }),
+        };
+
+        return categoryRepository.update(id, updateData);
     }
 
     // ====================
