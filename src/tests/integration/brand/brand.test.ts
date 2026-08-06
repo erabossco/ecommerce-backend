@@ -299,4 +299,16 @@ describe("BRAND API", () => {
 
     });
 
+    describe("DELETE /brands", () => {
+        it("should soft delete a brand", async () => {
+            const id = result.id;
+            const response = await request(app)
+                .delete(`${apiEndPoint}/${id}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toBe(BRAND_MESSAGES.BRAND_DELETED);
+        });
+    });
+
 });
