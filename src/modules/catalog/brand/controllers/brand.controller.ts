@@ -74,6 +74,22 @@ class BrandController {
         }
     }
 
+    // =====================
+    // SOFT DELETE A BRAND
+    // =====================
+
+    async delete(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = res.locals.params;
+            res.status(200).json({
+                success: true,
+                message: BRAND_MESSAGES.BRAND_DELETED
+            })
+        } catch (error) {
+            next(error);
+        }
+    }
+
 }
 
 export const brandController = new BrandController();

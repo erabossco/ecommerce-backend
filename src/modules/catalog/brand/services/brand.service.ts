@@ -5,6 +5,8 @@ import type { BrandList, BrandQueryDto, CreateBrandDto, UpdateBrandDto } from ".
 import { ConflictError } from "@/shared/errors/conflict.error.js";
 import { BRAND_ERRORS } from "../errors/brand-errors.js";
 import { NotFoundError } from "@/shared/errors/not-found.error.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
+import { BRAND_MESSAGES } from "../constants/brand.constants.js";
 
 
 class BrandService {
@@ -135,6 +137,25 @@ class BrandService {
 
         return brandRepository.update(id, updateData);
 
+    }
+
+    // ============================
+    // DELETE A BRAND (SOFT DELETE)
+    // ============================
+
+    async delete(id: string): Promise<Brand> {
+        const brand = await brandRepository.findById(id);
+        if (!brand) {
+            throw new NotFoundError(BRAND_ERRORS.BRAND_NOT_FOUND);
+        }
+        // WHEN PRODUCT REPOSITORY IS READY, COMPLETE THIS PART
+        // const hasProducts = await productRepository.existsByBrandId(id);
+
+        // if (hasProducts) {
+        //     throw new ConflictError(BRAND_ERRORS.BRAND_HAS_PRODUCTS);
+        // }
+
+        return await brandRepository.delete(id);
     }
 }
 

@@ -28,4 +28,9 @@ router.patch("/:id",
     brandController.update
 );
 
+router.delete("/:id",
+    validateParams(brandIdSchema),
+    brandController.delete
+);
+
 export const brandRouter = router;

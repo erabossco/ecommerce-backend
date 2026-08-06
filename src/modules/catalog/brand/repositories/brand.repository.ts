@@ -67,6 +67,17 @@ class BrandRepository {
         })
     }
 
+    // Delete a brand (soft delete)
+    async delete(id: string): Promise<Brand> {
+        return await prisma.brand.update({
+            where: { id },
+            data: {
+                isActive: false,
+                deletedAt: new Date(),
+            }
+        });
+    }
+
 }
 
 export const brandRepository = new BrandRepository();
