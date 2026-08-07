@@ -326,6 +326,18 @@ describe("BRAND API", () => {
             expect(response.body.message).toBe(BRAND_ERRORS.BRAND_NOT_FOUND);
         });
 
+        // Reject deletion for invalid brand id length
+        it("should reject delete for invalid id length", async () => {
+            const id = "a";
+            const response = await request(app)
+                .delete(`${apiEndPoint}/${id}`)
+
+            expect(response.status).toBe(400);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
+            expect(response.body.errors[0].message).toBe(BRAND_ERRORS.INVALID_BRAND_ID);
+        });
+
 
     });
 

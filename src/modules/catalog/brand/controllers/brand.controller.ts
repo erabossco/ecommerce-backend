@@ -78,7 +78,7 @@ class BrandController {
     // SOFT DELETE A BRAND
     // =====================
 
-    async delete(req: Request, res: Response, next: NextFunction) {
+    async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = res.locals.params;
             await brandService.delete(id);
