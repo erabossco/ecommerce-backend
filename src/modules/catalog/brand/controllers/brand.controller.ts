@@ -81,6 +81,7 @@ class BrandController {
     async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = res.locals.params;
+            await brandService.delete(id);
             res.status(200).json({
                 success: true,
                 message: BRAND_MESSAGES.BRAND_DELETED

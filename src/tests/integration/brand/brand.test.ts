@@ -5,6 +5,7 @@ import { BRAND_MESSAGES } from "@/modules/catalog/brand/constants/brand.constant
 import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 import { BRAND_ERRORS } from "@/modules/catalog/brand/errors/brand-errors.js";
 import { createId } from "@paralleldrive/cuid2";
+import { brandService } from "@/modules/catalog/brand/services/brand.service.js";
 
 
 
@@ -299,7 +300,11 @@ describe("BRAND API", () => {
 
     });
 
+
+    // SOFT DELETE A BRAND
     describe("DELETE /brands", () => {
+
+        // soft delete a brand
         it("should soft delete a brand", async () => {
             const id = result.id;
             const response = await request(app)
@@ -309,6 +314,19 @@ describe("BRAND API", () => {
             expect(response.body.success).toBe(true);
             expect(response.body.message).toBe(BRAND_MESSAGES.BRAND_DELETED);
         });
+
+        // Reject deletion for incorrect brand id 
+        it("should reject delete for incorrect brand id", async () => {
+            const id = createId();
+            const response = await request(app)
+                .delete(`${apiEndPoint}/${id}`)
+
+            expect(response.status).toBe(404);
+            expect(response.body.success).toBe(false);
+            expect(response.body.message).toBe(BRAND_ERRORS.BRAND_NOT_FOUND);
+        });
+
+
     });
 
 });
