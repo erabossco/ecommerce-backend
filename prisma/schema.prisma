@@ -9,7 +9,7 @@ datasource db {
 }
 
 // ============================
-//    ENUMS
+// ENUMS
 // ============================
 
 enum Role {
@@ -25,7 +25,7 @@ enum AuthProvider {
 }
 
 // ===========================
-//     USER MODEL
+// USER MODEL
 // ===========================
 
 model User {
@@ -62,7 +62,7 @@ model User {
 }
 
 // =======================
-//      SESSION MODEL
+// SESSION MODEL
 // =======================
 
 model Session {
@@ -88,7 +88,7 @@ model Session {
 }
 
 // =============================
-//     REFRESH TOKEN MODEL
+// REFRESH TOKEN MODEL
 // =============================
 
 model RefreshToken {
@@ -128,7 +128,7 @@ model EmailVerificationToken {
 }
 
 // =============================
-//     PASSWORD TOKEN MODLE 
+// PASSWORD TOKEN MODLE 
 // =============================
 
 model PasswordResetToken {
@@ -147,7 +147,7 @@ model PasswordResetToken {
 }
 
 // =====================
-//   CATEGORY MODLE
+// CATEGORY MODLE
 // =====================
 
 model Category {
@@ -186,7 +186,7 @@ model Category {
 }
 
 // =====================
-//     BRAND MODEL
+// BRAND MODEL
 // =====================
 
 model Brand {
@@ -211,7 +211,7 @@ model Brand {
 }
 
 // =====================
-//     PRODUCT MODEL
+// PRODUCT MODEL
 // =====================
 
 model Product {
@@ -230,7 +230,7 @@ model Product {
 
   isActive    Boolean @default(true)
   isFeatured  Boolean @default(false)
-  isPublished Boolean @default(false)
+  isPublished Boolean @default(true)
 
   sortOrder Int @default(0)
 
@@ -258,7 +258,7 @@ model Product {
 }
 
 // ====================
-//    PRODUCT IMAGE MODEL
+// PRODUCT IMAGE MODEL
 // ====================
 
 model ProductImage {
