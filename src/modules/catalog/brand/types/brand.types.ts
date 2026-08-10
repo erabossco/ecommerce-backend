@@ -10,8 +10,8 @@ export type BrandIdDto = z.infer<typeof brandIdSchema>;
 export type BrandQueryDto = z.infer<typeof brandQuerySchema>;
 
 export interface BrandList {
-    data: Brand[],
-    meta: PaginationMeta,
+    data: Brand[];
+    meta: PaginationMeta;
 }
 
 export type UpdateBrandDto = z.infer<typeof updateBrandSchema>;
