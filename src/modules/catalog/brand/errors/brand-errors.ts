@@ -1,4 +1,4 @@
-import { INVALID } from "zod/v3";
+import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 
 export const BRAND_ERRORS = {
     INVALID_BRAND_NAME: "Invalid brand name.",
@@ -7,7 +7,7 @@ export const BRAND_ERRORS = {
     INVALID_SLUG_LIMIT: "Brand slug must be within 2-50 characters.",
     INVALID_BRAND_DESCRIPTION: "Invalid brand description",
     INVALID_BRAND_LOGO_URL: "Invalid brand logo url",
-    INVALID_BRAND_ID: "Invalid brand id",
+    INVALID_BRAND_ID: ERROR_MESSAGES.INVALID_BRAND_ID,
     INVALID_PAGE_NUMBER: "Invalid page number",
     INVALID_BRAND_LIMIT: "Invalid page limit",
     INVALID_BRAND_SEARCH: "Invalid brand search",

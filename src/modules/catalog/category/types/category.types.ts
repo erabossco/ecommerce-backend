@@ -1,8 +1,9 @@
 import { z } from "zod";
 import type { Category } from "@prisma/client";
 
-import { categoryIdSchema, categoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
+import { categoryQuerySchema, createCategorySchema, updateCategorySchema, } from "../validators/category.validator.js";
 import type { PaginationMeta } from "@/shared/types/api-response.types.js";
+import type { categoryIdSchema } from "@/shared/validators/common.validator.js";
 
 export type CategoryIdDto = z.infer<typeof categoryIdSchema>
 

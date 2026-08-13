@@ -10,9 +10,6 @@ export const PRODUCT_ERRORS = {
     INVALID_PRODUCT_DESCRIPTION: "Invalid product description.",
     INVALID_PRODUCT_DESCRIPTION_LIMIT: "Product description should be maximum 1000 characters.",
 
-    INVALID_CATEGORY_ID: "Invalid category ID.",
-    INVALID_BRAND_ID: "Invalid brand ID.",
-
     INVALID_SORT_ORDER: "Invalid sort order.",
 
     INVALID_META_TITLE: "Invalid meta title.",

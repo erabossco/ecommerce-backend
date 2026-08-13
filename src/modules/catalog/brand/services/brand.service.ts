@@ -6,7 +6,6 @@ import { ConflictError } from "@/shared/errors/conflict.error.js";
 import { BRAND_ERRORS } from "../errors/brand-errors.js";
 import { NotFoundError } from "@/shared/errors/not-found.error.js";
 import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
-import { BRAND_MESSAGES } from "../constants/brand.constants.js";
 
 
 class BrandService {

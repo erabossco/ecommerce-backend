@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { brandController } from "../controllers/brand.controller.js";
-import { brandIdSchema, brandQuerySchema, createBrandSchema, updateBrandSchema } from "../validators/brand.validator.js";
+import { brandQuerySchema, createBrandSchema, updateBrandSchema } from "../validators/brand.validator.js";
 import { validateBody, validateParams, validateQuery } from "@/shared/middlewares/validate-request.middleware.js";
+import { brandIdSchema } from "@/shared/validators/common.validator.js";
 
 
 const router = Router();

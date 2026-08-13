@@ -172,7 +172,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_CATEGORY_ID);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
         });
 
         // sending validated but non-existing id will return 404
@@ -421,7 +421,7 @@ describe("Category API", () => {
             expect(response.status).toBe(400);
             expect(response.body.success).toBe(false);
             expect(response.body.message).toBe(ERROR_MESSAGES.VALIDATION_FAILED);
-            expect(response.body.errors[0].message).toBe(CATEGORY_ERRORS.INVALID_CATEGORY_ID);
+            expect(response.body.errors[0].message).toBe(ERROR_MESSAGES.INVALID_CATEGORY_ID);
         });
     });
 

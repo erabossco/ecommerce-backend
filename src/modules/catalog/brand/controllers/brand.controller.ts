@@ -1,7 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
 import { brandService } from "../services/brand.service.js";
-import type { BrandIdDto, BrandQueryDto, CreateBrandDto, UpdateBrandDto } from "../types/brand.types.js";
+import type { BrandQueryDto, CreateBrandDto, UpdateBrandDto } from "../types/brand.types.js";
 import { BRAND_MESSAGES } from "../constants/brand.constants.js";
+import type { BrandIdDto } from "@/shared/types/common.types.js";
 
 class BrandController {
     // BRAND CREATE

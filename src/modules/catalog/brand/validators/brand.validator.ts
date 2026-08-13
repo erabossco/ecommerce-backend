@@ -28,23 +28,6 @@ export const createBrandSchema = z.object({
 
 });
 
-// ======================
-// BRAND ID SCHEMA
-// ======================
-
-export const brandIdSchema = z.object({
-    // z.cuid2() is not working so used regex
-    id: z
-        .string({ error: BRAND_ERRORS.INVALID_BRAND_ID })
-        .trim()
-        .regex(
-            /^[a-z][a-z0-9]{23}$/,
-            {
-                error: BRAND_ERRORS.INVALID_BRAND_ID,
-            }
-        )
-});
-
 // ========================
 // BRAND QUERY SCHEMA
 // =======================

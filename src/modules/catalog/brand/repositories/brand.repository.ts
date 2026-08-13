@@ -1,6 +1,5 @@
 import type { Brand, Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma/prisma.client.js"
-import type { CreateBrandDto, UpdateBrandDto } from "../types/brand.types.js";
 
 class BrandRepository {
 

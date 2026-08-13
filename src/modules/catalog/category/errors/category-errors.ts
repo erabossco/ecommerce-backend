@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
+
 export const CATEGORY_ERRORS = {
     // App error
 
@@ -10,7 +12,6 @@ export const CATEGORY_ERRORS = {
     PARENT_CATEGORY_DELETED: "Parent category was deleted.",
 
     // Validation error
-    INVALID_CATEGORY_ID: "Invalid category id",
     INVALID_PAGE_NUMBER: "Invalid page number.",
     INVALID_CATEGORY_LIMIT: "Invalid category limit.",
     INVALID_CATEGORY_SEARCH: "Invalid category search.",

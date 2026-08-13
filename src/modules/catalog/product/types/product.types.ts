@@ -1,5 +1,5 @@
 import z from "zod";
-import type { brandIdSchema, categoryIdSchema, createProductSchema, productQuerySchema, updateProductSchema } from "../validators/product.validator.js";
+import type { createProductSchema, productQuerySchema, updateProductSchema } from "../validators/product.validator.js";
 import type { Product } from "@prisma/client";
 import type { PaginationMeta } from "@/shared/types/api-response.types.js";
 
@@ -13,7 +13,3 @@ export interface ProductList {
     data: Product[];
     meta: PaginationMeta;
 };
-
-export type BrandIdDto = z.infer<typeof brandIdSchema>;
-
-export type CategoryIdDto = z.infer<typeof categoryIdSchema>;

@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import { categoryService } from "../services/category.service.js";
-import { createCategorySchema, updateCategorySchema } from "../validators/category.validator.js";
 import type { CategoryQueryDto, CreateCategoryDto, UpdateCategoryDto } from "../types/category.types.js";
 
 class CategoryController {

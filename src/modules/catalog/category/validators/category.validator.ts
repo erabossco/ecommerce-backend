@@ -4,24 +4,6 @@ import { CATEGORY } from "../constants/category.constants.js";
 import { CATEGORY_ERRORS } from "../errors/category-errors.js";
 
 
-// ======================
-// CATEGORY ID SCHEMA
-// ======================
-
-export const categoryIdSchema = z.object({
-    // z.cuid2() is not working so used regex
-    id: z
-        .string({ error: CATEGORY_ERRORS.INVALID_CATEGORY_ID })
-        .trim()
-        .regex(
-            /^[a-z][a-z0-9]{23}$/,
-            {
-                error: CATEGORY_ERRORS.INVALID_CATEGORY_ID,
-            }
-        )
-});
-
-
 // =============================
 // CREATE CATEGORY SCHEMA
 // =============================

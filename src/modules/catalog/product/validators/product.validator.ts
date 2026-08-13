@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PRODUCT_ERRORS } from "../errors/product-errors.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 
 // ============================
 // CREATE PRODUCT SCHEMA
@@ -31,10 +32,10 @@ export const createProductSchema = z.object({
         .optional(),
 
     categoryId: z
-        .cuid2({ error: PRODUCT_ERRORS.INVALID_CATEGORY_ID }),
+        .cuid2({ error: ERROR_MESSAGES.INVALID_CATEGORY_ID }),
 
     brandId: z
-        .cuid2({ error: PRODUCT_ERRORS.INVALID_BRAND_ID })
+        .cuid2({ error: ERROR_MESSAGES.INVALID_BRAND_ID })
         .optional()
         .nullable(),
 
@@ -110,11 +111,11 @@ export const productQuerySchema = z.object({
         .optional(),
 
     categoryId: z
-        .cuid2({ error: PRODUCT_ERRORS.INVALID_CATEGORY_ID })
+        .cuid2({ error: ERROR_MESSAGES.INVALID_CATEGORY_ID })
         .optional(),
 
     brandId: z
-        .cuid2({ error: PRODUCT_ERRORS.INVALID_BRAND_ID })
+        .cuid2({ error: ERROR_MESSAGES.INVALID_BRAND_ID })
         .optional(),
 
     isActive: z
@@ -144,43 +145,4 @@ export const productQuerySchema = z.object({
     order: z
         .enum(["asc", "desc"])
         .default("desc"),
-});
-
-
-// The followiing 2 code blocks are repeating also in brand types and category types.
-// But did not import from there because of module independency.
-// Think if this can put in shared folder
-
-// ======================
-// BRAND ID SCHEMA
-// ======================
-
-export const brandIdSchema = z.object({
-    // z.cuid2() is not working so used regex
-    id: z
-        .string({ error: PRODUCT_ERRORS.INVALID_BRAND_ID })
-        .trim()
-        .regex(
-            /^[a-z][a-z0-9]{23}$/,
-            {
-                error: PRODUCT_ERRORS.INVALID_BRAND_ID,
-            }
-        )
-});
-
-// ======================
-// CATEGORY ID SCHEMA
-// ======================
-
-export const categoryIdSchema = z.object({
-    // z.cuid2() is not working so used regex
-    id: z
-        .string({ error: PRODUCT_ERRORS.INVALID_CATEGORY_ID })
-        .trim()
-        .regex(
-            /^[a-z][a-z0-9]{23}$/,
-            {
-                error: PRODUCT_ERRORS.INVALID_CATEGORY_ID,
-            }
-        )
 });
