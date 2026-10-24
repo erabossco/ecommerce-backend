@@ -7,12 +7,16 @@ import { productRouter } from "./routes/product.routes.js";
 const router = Router();
 
 
+
 // Product Variant
 router.use("/variants", variantModule.router);
 
 // Inventory
 
 router.use("/inventory", inventoryModule.router);
+
+// Product Image
+
 
 // Product 
 router.use("/", productRouter);
