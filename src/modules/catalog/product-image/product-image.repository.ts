@@ -17,6 +17,36 @@ export const productImageRepository = {
     },
 
     // ============================
+    // CREATE IMAGE WITH PRIMARY HANDLING
+    // ============================
+
+    async createWithPrimaryHandling(variantId: string, data: Omit<Prisma.ProductImageCreateInput, "variant">): Promise<ProductImage> {
+
+        return prisma.$transaction(async (tx) => {
+            if (data.isPrimary) {
+                await tx.productImage.updateMany({
+                    where: {
+                        variantId,
+                        isPrimary: true,
+                    },
+                    data: {
+                        isPrimary: false,
+                    },
+                });
+            }
+
+            return tx.productImage.create({
+                data: {
+                    ...data,
+                    variant: {
+                        connect: { id: variantId },
+                    },
+                },
+            });
+        });
+    },
+
+    // ============================
     // FIND IMAGE BY ID
     // ============================
 
@@ -54,6 +84,23 @@ export const productImageRepository = {
     },
 
     // ============================
+    // FIND VARIANT BY PRODUCT
+    // ============================
+
+    async findVariant(productId: string, variantId: string): Promise<{ id: string } | null> {
+        return prisma.productVariant.findFirst({
+            where: {
+                id: variantId,
+                productId,
+                deletedAt: null,
+            },
+            select: {
+                id: true,
+            },
+        });
+    },
+
+    // ============================
     // FIND PRIMARY IMAGE BY VARIANT
     // ============================
 
@@ -69,11 +116,27 @@ export const productImageRepository = {
     // ============================
     // UPDATE PRODUCT IMAGE
     // ============================
+    // ============================
+    // UPDATE PRODUCT IMAGE
+    // ============================
 
-    async update(id: string, data: Prisma.ProductImageUpdateInput): Promise<ProductImage> {
-        return prisma.productImage.update({
-            where: { id },
-            data,
+    async update(imageId: string, variantId: string, data: Prisma.ProductImageUpdateInput): Promise<ProductImage> {
+        return prisma.$transaction(async (tx) => {
+            if (data.isPrimary === true) {
+                await tx.productImage.updateMany({
+                    where: {
+                        variantId,
+                        isPrimary: true,
+                        id: { not: imageId },
+                    },
+                    data: { isPrimary: false },
+                });
+            }
+
+            return tx.productImage.update({
+                where: { id: imageId },
+                data,
+            });
         });
     },
 
@@ -81,9 +144,31 @@ export const productImageRepository = {
     // DELETE PRODUCT IMAGE
     // ============================
 
-    async delete(id: string): Promise<ProductImage> {
-        return prisma.productImage.delete({
-            where: { id },
+    async delete(imageId: string, variantId: string, isPrimary: boolean): Promise<ProductImage> {
+        return prisma.$transaction(async (tx) => {
+            const deletedImage = await tx.productImage.delete({
+                where: { id: imageId },
+            });
+
+            if (isPrimary) {
+                const nextImage = await tx.productImage.findFirst({
+                    where: { variantId },
+                    orderBy: [
+                        { sortOrder: "asc" },
+                        { createdAt: "asc" },
+                        { id: "asc" },
+                    ],
+                });
+
+                if (nextImage) {
+                    await tx.productImage.update({
+                        where: { id: nextImage.id },
+                        data: { isPrimary: true },
+                    });
+                }
+            }
+
+            return deletedImage;
         });
     },
 
