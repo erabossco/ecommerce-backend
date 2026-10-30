@@ -1,14 +1,21 @@
 import request from "supertest";
 
 import app from "@/app.js";
-
 import { prisma } from "@/infrastructure/database/prisma/prisma.client.js";
-import { VARIANT_MESSAGES } from "@/modules/catalog/variant/variant.constants.js";
+import { SUCCESS_MESSAGES } from "@/shared/constants/success-messages.js";
 
+const productsEndpoint = "/api/v1/products";
+const globalVariantsEndpoint = `${productsEndpoint}/variants`;
 
-const apiEndPoint = "/api/v1/products/variants";
 const uniqueString = Date.now();
-const sku = `test-sku-${Date.now()}`;
+let categoryId: string;
+let brandId: string;
+let productId: string;
+let variantId: string;
+let secondVariantId: string;
+let barcode: string;
+const sku = `test-sku-${uniqueString}`;
+const secondSku = `test-second-sku-${uniqueString}`;
 
 interface Result {
     id: string;
@@ -21,18 +28,9 @@ interface Result {
 }
 let result: Partial<Result> = {};
 
-let productId: string;
-let variantId: string;
-let secondVariantId: string;
-
-// =====================
-// VARIANT TEST SUITE
-// =====================
-
 describe("Product Variant API", async () => {
 
     // CREATE A CATEGORY BEFORE CREATING A PRODUCT
-
     const categoryApiEndPoint = "/api/v1/categories";
     const categoryPayload = {
         name: `test-category-${uniqueString}`,
@@ -43,8 +41,7 @@ describe("Product Variant API", async () => {
     const category = await request(app)
         .post(categoryApiEndPoint)
         .send(categoryPayload);
-    const categoryId = category.body.data.id;
-
+    categoryId = category.body.data.id;
 
     // CREATE A BRAND BEFORE CREATING A PRODUCT
     const brandApiEndPoint = "/api/v1/brands";
@@ -56,8 +53,9 @@ describe("Product Variant API", async () => {
     const brand = await request(app)
         .post(brandApiEndPoint)
         .send(brandPayload);
-    const brandId = brand.body.data.id;
+    brandId = brand.body.data.id;
 
+    // CREATE A PRODUCT BEFORE CREATING A VARIANT
     const productApiEndPoint = "/api/v1/products";
     const productPayload = {
         name: `test-product-${uniqueString}`,
@@ -71,22 +69,21 @@ describe("Product Variant API", async () => {
         .post(productApiEndPoint)
         .send(productPayload);
 
-    const productId = product.body.data.id;
+    productId = product.body.data.id;
+
+    // VARIANTS ENDPOINT
+    const variantsEndpoint = `${productsEndpoint}/${productId}/variants`;
 
 
+    // VARIANT TEST STARTS
 
-    // ========================================================
-    // CREATE
-    // ========================================================
+    describe("POST /products/:productId/variants", () => {
 
-    describe("POST /products/variants", () => {
-
+        // Create a variant
         it("should create a product variant", async () => {
-
             const response = await request(app)
-                .post(apiEndPoint)
+                .post(variantsEndpoint)
                 .send({
-                    productId,
                     sku,
                     price: 100,
                     costPrice: 70,
@@ -101,37 +98,28 @@ describe("Product Variant API", async () => {
 
             expect(response.status).toBe(201);
             expect(response.body.success).toBe(true);
-            expect(response.body.data).toBeDefined();
-
-            expect(response.body.data.productId)
-                .toBe(productId);
-
-            expect(response.body.data.isDefault)
-                .toBe(true);
+            expect(response.body.data.productId).toBe(productId);
+            expect(response.body.data.isDefault).toBe(true);
 
             variantId = response.body.data.id;
         });
 
-        it("should reject duplicate SKU", async () => {
+        // Should reject a duplicate SKU
+        it("should reject a duplicate SKU", async () => {
             const response = await request(app)
-                .post(apiEndPoint)
-                .send({
-                    productId,
-                    sku,
-                    price: 150,
-                });
+                .post(variantsEndpoint)
+                .send({ sku, price: 150 });
 
             expect(response.status).toBe(409);
             expect(response.body.success).toBe(false);
         });
 
-        it("should reject invalid product ID", async () => {
-
+        // Should reject an invalid product ID
+        it("should reject an invalid product ID", async () => {
             const response = await request(app)
-                .post(apiEndPoint)
+                .post(`${productsEndpoint}/invalid-product-id/variants`)
                 .send({
-                    productId: "invalid-product-id",
-                    sku: `INVALID-${Date.now()}`,
+                    sku: `invalid-product-sku-${uniqueString}`,
                     price: 100,
                 });
 
@@ -140,221 +128,130 @@ describe("Product Variant API", async () => {
         });
     });
 
-    // ========================================================
-    // GET ALL
-    // ========================================================
+
+    // GET GLOBAL VARIANTS
 
     describe("GET /products/variants", () => {
 
-        it("should return all variants", async () => {
-
+        // Get all variants globally
+        it("should return all variants globally", async () => {
             const response = await request(app)
-                .get(apiEndPoint);
+                .get(globalVariantsEndpoint);
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(Array.isArray(response.body.data))
-                .toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
+        });
+
+        // Get active variants globally
+        it("should return active variants globally", async () => {
+            const response = await request(app)
+                .get(`${globalVariantsEndpoint}/active`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
         });
     });
 
-    // ========================================================
-    // GET ACTIVE
-    // ========================================================
 
-    describe("GET /products/variants/active", () => {
-
-        it("should return active variants", async () => {
-
+    // Get global variant by SKU
+    describe("GET /products/variants/sku/:sku", () => {
+        it("should find a variant by SKU", async () => {
             const response = await request(app)
-                .get(`${apiEndPoint}/active`);
+                .get(`${globalVariantsEndpoint}/sku/${encodeURIComponent(sku)}`);
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(Array.isArray(response.body.data))
-                .toBe(true);
+            expect(response.body.data.id).toBe(variantId);
         });
     });
 
-    // ========================================================
-    // GET BY ID
-    // ========================================================
+    // Get global variant by barcode
+    describe("GET /products/variants/barcode/:barcode", () => {
 
-    describe("GET /products/variants/:id", () => {
+        // Get variant by barcode
+        it("should find a variant by barcode", async () => {
+            barcode = `BARCODE-${uniqueString}`;
 
-        it("should return variant by ID", async () => {
+            await prisma.productVariant.update({
+                where: { id: variantId },
+                data: { barcode },
+            });
 
             const response = await request(app)
-                .get(`${apiEndPoint}/${variantId}`);
+                .get(`${globalVariantsEndpoint}/barcode/${encodeURIComponent(barcode)}`);
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
+            expect(response.body.data.id).toBe(variantId);
+        });
+    });
 
-            expect(response.body.data.id)
-                .toBe(variantId);
+
+    // GET SINGLE-PRODUCT SPECIFIC VARIANTS
+
+    describe("Product-specific variants", () => {
+
+        // Get a product specific variant
+        it("should return variants belonging to the product", async () => {
+            const response = await request(app).get(variantsEndpoint);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
         });
 
-        it("should return 404 for non-existing variant", async () => {
-
+        // Get product specific active variants
+        it("should return active variants belonging to the product", async () => {
             const response = await request(app)
-                .get(
-                    `${apiEndPoint}/cmabcdefghijklmnoptuvwxn`
-                );
+                .get(`${variantsEndpoint}/active`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(Array.isArray(response.body.data)).toBe(true);
+        });
+
+        // Get the default variant
+        it("should return the product's default variant", async () => {
+            const response = await request(app)
+                .get(`${variantsEndpoint}/default`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.isDefault).toBe(true);
+        });
+
+        // Get variant by ID
+        it("should return a variant by ID scoped to the product", async () => {
+            const response = await request(app)
+                .get(`${variantsEndpoint}/${variantId}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.id).toBe(variantId);
+        });
+
+        // Return not found for non-existing variant
+        it("should return 404 for a non-existing variant ID", async () => {
+            const response = await request(app).get(
+                `${variantsEndpoint}/cmabcdefghijklmnoptuvwxn`,
+            );
 
             expect(response.status).toBe(404);
             expect(response.body.success).toBe(false);
         });
     });
 
-    // ========================================================
-    // GET BY SKU
-    // ========================================================
 
-    describe("GET /products/variants/sku/:sku", () => {
+    // UPDATE VARIANTS 
 
-        it("should return variant by SKU", async () => {
+    describe("PATCH /products/:productId/variants/:id", () => {
 
-            const variant = await prisma.productVariant.findUnique({
-                where: {
-                    id: variantId,
-                },
-            });
-
+        // Update a variant
+        it("should update a variant", async () => {
             const response = await request(app)
-                .get(
-                    `${apiEndPoint}/sku/${variant!.sku}`
-                );
-
-            expect(response.status).toBe(200);
-            expect(response.body.success).toBe(true);
-
-            expect(response.body.data.id)
-                .toBe(variantId);
-        });
-    });
-
-    // ========================================================
-    // GET BY PRODUCT
-    // ========================================================
-
-    describe(
-        "GET /products/variants/product/:productId",
-        () => {
-
-            it("should return variants by product", async () => {
-
-                const response = await request(app)
-                    .get(
-                        `${apiEndPoint}/product/${productId}`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(Array.isArray(response.body.data))
-                    .toBe(true);
-            });
-        }
-    );
-
-    // ========================================================
-    // GET ACTIVE BY PRODUCT
-    // ========================================================
-
-    describe(
-        "GET /products/variants/product/:productId/active",
-        () => {
-
-            it("should return active variants by product", async () => {
-
-                const response = await request(app)
-                    .get(
-                        `${apiEndPoint}/product/${productId}/active`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(Array.isArray(response.body.data))
-                    .toBe(true);
-            });
-        }
-    );
-
-    // ========================================================
-    // GET DEFAULT BY PRODUCT
-    // ========================================================
-
-    describe(
-        "GET /products/variants/product/:productId/default",
-        () => {
-
-            it("should return default variant", async () => {
-
-                const response = await request(app)
-                    .get(
-                        `${apiEndPoint}/product/${productId}/default`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(response.body.data.isDefault)
-                    .toBe(true);
-            });
-        }
-    );
-
-    // ========================================================
-    // GET BY BARCODE
-    // ========================================================
-
-    describe(
-        "GET /products/variants/barcode/:barcode",
-        () => {
-
-            it("should return variant by barcode", async () => {
-
-                await prisma.productVariant.update({
-                    where: {
-                        id: variantId,
-                    },
-                    data: {
-                        barcode: `BARCODE-${Date.now()}`,
-                    },
-                });
-
-                const variant =
-                    await prisma.productVariant.findUnique({
-                        where: {
-                            id: variantId,
-                        },
-                    });
-
-                const response = await request(app)
-                    .get(
-                        `${apiEndPoint}/barcode/${variant!.barcode}`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(response.body.data.id)
-                    .toBe(variantId);
-            });
-        }
-    );
-
-    // ========================================================
-    // UPDATE
-    // ========================================================
-
-    describe("PATCH /products/variants/:id", () => {
-
-        it("should update variant", async () => {
-
-            const response = await request(app)
-                .patch(`${apiEndPoint}/${variantId}`)
+                .patch(`${variantsEndpoint}/${variantId}`)
                 .send({
                     price: 200,
                     costPrice: 120,
@@ -362,25 +259,21 @@ describe("Product Variant API", async () => {
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-
-            expect(Number(response.body.data.price))
-                .toBe(200);
+            expect(Number(response.body.data.price)).toBe(200);
         });
     });
 
-    // ========================================================
+
     // CREATE SECOND VARIANT
-    // ========================================================
 
-    describe("Create second variant", () => {
+    describe("Variant default and activation operations", () => {
 
-        it("should create another variant", async () => {
-
+        // Create a second variant
+        it("should create a second variant", async () => {
             const response = await request(app)
-                .post(apiEndPoint)
+                .post(variantsEndpoint)
                 .send({
-                    productId,
-                    sku: `SECOND-SKU-${Date.now()}`,
+                    sku: secondSku,
                     price: 250,
                     isDefault: false,
                     isActive: true,
@@ -392,219 +285,95 @@ describe("Product Variant API", async () => {
 
             secondVariantId = response.body.data.id;
         });
-    });
 
-    // ========================================================
-    // SET DEFAULT
-    // ========================================================
-
-    describe(
-        "PATCH /products/variants/:id/default",
-        () => {
-
-            it("should set variant as default", async () => {
-
-                const response = await request(app)
-                    .patch(
-                        `${apiEndPoint}/${secondVariantId}/default`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(response.body.data.isDefault)
-                    .toBe(true);
-
-                // Previous default should now be false
-                const previous =
-                    await prisma.productVariant.findUnique({
-                        where: {
-                            id: variantId,
-                        },
-                    });
-
-                expect(previous!.isDefault)
-                    .toBe(false);
-            });
-        }
-    );
-
-    // ========================================================
-    // UNSET DEFAULT
-    // ========================================================
-
-    describe(
-        "PATCH /products/variants/:id/default/remove",
-        () => {
-
-            it("should unset default variant", async () => {
-
-                const response = await request(app)
-                    .patch(
-                        `${apiEndPoint}/${secondVariantId}/default/remove`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(response.body.data.isDefault)
-                    .toBe(false);
-            });
-        }
-    );
-
-    // ========================================================
-    // DEACTIVATE
-    // ========================================================
-
-    describe(
-        "PATCH /products/variants/:id/deactivate",
-        () => {
-
-            it("should deactivate variant", async () => {
-
-                const response = await request(app)
-                    .patch(
-                        `${apiEndPoint}/${secondVariantId}/deactivate`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(response.body.data.isActive)
-                    .toBe(false);
-            });
-        }
-    );
-
-    // ========================================================
-    // ACTIVATE
-    // ========================================================
-
-    describe(
-        "PATCH /products/variants/:id/activate",
-        () => {
-
-            it("should activate variant", async () => {
-
-                const response = await request(app)
-                    .patch(
-                        `${apiEndPoint}/${secondVariantId}/activate`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-
-                expect(response.body.data.isActive)
-                    .toBe(true);
-            });
-        }
-    );
-
-    // ========================================================
-    // COUNT
-    // ========================================================
-
-    describe("GET /products/variants/count", () => {
-
-        it("should return variant count", async () => {
-
-            const response = await request(app)
-                .get(`${apiEndPoint}/count`);
+        // Set second variant as default
+        it("should set the second variant as default", async () => {
+            const response = await request(app).patch(
+                `${variantsEndpoint}/${secondVariantId}/default`,
+            );
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(typeof response.body.data)
-                .toBe("number");
+            expect(response.body.data.isDefault).toBe(true);
+
+            const previous = await prisma.productVariant.findUnique({
+                where: { id: variantId },
+            });
+
+            expect(previous?.isDefault).toBe(false);
         });
-    });
 
-    // ========================================================
-    // COUNT ACTIVE
-    // ========================================================
 
-    describe(
-        "GET /products/variants/count/active",
-        () => {
-
-            it("should return active variant count", async () => {
-
-                const response = await request(app)
-                    .get(
-                        `${apiEndPoint}/count/active`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-                expect(typeof response.body.data)
-                    .toBe("number");
-            });
-        }
-    );
-
-    // ========================================================
-    // COUNT BY PRODUCT
-    // ========================================================
-
-    describe(
-        "GET /products/variants/product/:productId/count",
-        () => {
-
-            it("should return product variant count", async () => {
-
-                const response = await request(app)
-                    .get(
-                        `${apiEndPoint}/product/${productId}/count`
-                    );
-
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
-                expect(typeof response.body.data)
-                    .toBe("number");
-            });
-        }
-    );
-
-    // ========================================================
-    // DELETE
-    // ========================================================
-
-    describe("DELETE /products/variants/:id", () => {
-
-        it("should soft delete variant", async () => {
-
-            const response = await request(app)
-                .delete(
-                    `${apiEndPoint}/${secondVariantId}`
-                );
+        // Unset second variant from default
+        it("should unset the second variant as default", async () => {
+            const response = await request(app).patch(
+                `${variantsEndpoint}/${secondVariantId}/default/remove`,
+            );
 
             expect(response.status).toBe(200);
             expect(response.body.success).toBe(true);
-            expect(response.body.message).toBe(VARIANT_MESSAGES.PRODUCT_VARIANT_DELETED);
+            expect(response.body.data.isDefault).toBe(false);
+        });
+
+
+        // Deactivate second variant
+        it("should deactivate the second variant", async () => {
+            const response = await request(app).patch(
+                `${variantsEndpoint}/${secondVariantId}/deactivate`,
+            );
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.isActive).toBe(false);
+        });
+
+        // Activate the second variant
+        it("should activate the second variant", async () => {
+            const response = await request(app).patch(
+                `${variantsEndpoint}/${secondVariantId}/activate`,
+            );
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.isActive).toBe(true);
         });
     });
 
-    // ========================================================
-    // RESTORE
-    // ========================================================
+    // Count product variants
+    describe("Product variant counts", () => {
+        it("should return the count for the product", async () => {
+            const response = await request(app)
+                .get(`${variantsEndpoint}/count`);
 
-    describe(
-        "PATCH /products/variants/:id/restore",
-        () => {
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(typeof response.body.data.count).toBe("number");
+        });
+    });
 
-            it("should restore variant", async () => {
 
-                const response = await request(app)
-                    .patch(
-                        `${apiEndPoint}/${secondVariantId}/restore`
-                    );
+    // DELETE AND RESTORE PRODUCTS
 
-                expect(response.status).toBe(200);
-                expect(response.body.success).toBe(true);
+    describe("DELETE and restore product variant", () => {
 
-                expect(response.body.data.deletedAt)
-                    .toBeNull();
-            });
-        }
-    );
+        // Delete a product variant
+        it("should soft-delete the second variant", async () => {
+            const response = await request(app).delete(
+                `${variantsEndpoint}/${secondVariantId}`,
+            );
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.message).toBe(SUCCESS_MESSAGES.DELETED);
+        });
+
+        // Restore a soft-deleted product variant
+        it("should restore the second variant", async () => {
+            const response = await request(app).patch(`${variantsEndpoint}/${secondVariantId}/restore`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.success).toBe(true);
+            expect(response.body.data.deletedAt).toBeNull();
+        });
+    });
 });

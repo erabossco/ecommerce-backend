@@ -1,107 +1,153 @@
+
 import { Router } from "express";
 
 import { variantController } from "./variant.controller.js";
+import { validateBody, validateParams } from "@/shared/middlewares/validate-request.middleware.js";
 
 import {
     createVariantSchema,
     updateVariantSchema,
-    variantIdSchema,
     variantProductIdSchema,
-    variantSkuSchema,
-    variantBarcodeSchema,
+    variantIdParamsSchema,
 } from "./variant.validators.js";
 
-import { validateBody, validateParams } from "@/shared/middlewares/validate-request.middleware.js";
+// ==================
+// VARIANT ROUTES
+// ==================
+
+const router = Router({ mergeParams: true });
 
 
-const router = Router();
-
+// ==================
+// CREATE VARIANT
+// ====================
 
 router.post("/",
+    validateParams(variantProductIdSchema),
     validateBody(createVariantSchema),
-    variantController.create
+    variantController.create,
 );
 
-router.get("/", variantController.getAll);
-router.get("/count", variantController.count);
-router.get("/count/active", variantController.countActive);
 
+// ====================
+// GET VARIANTS BY PRODUCT
+// ====================
 
-
-router.get("/sku/:sku",
-    validateParams(variantSkuSchema),
-    variantController.getBySku
-);
-
-router.get("/barcode/:barcode",
-    validateParams(variantBarcodeSchema),
-    variantController.getByBarcode
-);
-
-router.get("/product/:productId",
+router.get("/",
     validateParams(variantProductIdSchema),
-    variantController.getByProduct
+    variantController.getByProduct,
 );
 
-router.get("/product/:productId/active",
+
+// ==============================
+// GET ACTIVE VARIANTS BY PRODUCT
+// ==============================
+
+router.get("/active",
     validateParams(variantProductIdSchema),
-    variantController.getActiveByProduct
+    variantController.getActiveByProduct,
 );
 
-router.get("/product/:productId/default",
+
+// ==============================
+// GET DEFAULT VARIANT BY PRODUCT
+// ==============================
+
+router.get("/default",
     validateParams(variantProductIdSchema),
-    variantController.getDefaultByProduct
+    variantController.getDefaultByProduct,
 );
 
-router.get("/product/:productId/count",
+
+// ==========================
+// COUNT VARIANTS BY PRODUCT
+// ==========================
+
+router.get("/count",
     validateParams(variantProductIdSchema),
-    variantController.countByProduct
+    variantController.countByProduct,
 );
 
-router.get("/active", variantController.getActive);
+
+// ====================
+// GET VARIANT BY ID
+// ====================
 
 router.get("/:id",
-    validateParams(variantIdSchema),
-    variantController.getById
+    validateParams(variantIdParamsSchema),
+    variantController.getById,
 );
+
+
+// ====================
+// UPDATE VARIANT
+// ====================
 
 router.patch("/:id",
-    validateParams(variantIdSchema),
+    validateParams(variantIdParamsSchema),
     validateBody(updateVariantSchema),
-    variantController.update
+    variantController.update,
 );
 
+
+// ====================
+// SET DEFAULT VARIANT
+// ====================
 
 router.patch("/:id/default",
-    validateParams(variantIdSchema),
-    variantController.setDefault
+    validateParams(variantIdParamsSchema),
+    variantController.setDefault,
 );
 
+
+// ====================
+// UNSET DEFAULT VARIANT
+// ====================
 
 router.patch("/:id/default/remove",
-    validateParams(variantIdSchema),
-    variantController.unsetDefault
+    validateParams(variantIdParamsSchema),
+    variantController.unsetDefault,
 );
 
+
+// ====================
+// ACTIVATE VARIANT
+// ====================
 
 router.patch("/:id/activate",
-    validateParams(variantIdSchema),
-    variantController.activate
+    validateParams(variantIdParamsSchema),
+    variantController.activate,
 );
+
+
+// ====================
+// DEACTIVATE VARIANT
+// ====================
 
 router.patch("/:id/deactivate",
-    validateParams(variantIdSchema),
-    variantController.deactivate
+    validateParams(variantIdParamsSchema),
+    variantController.deactivate,
 );
+
+
+// ====================
+// RESTORE VARIANT
+// ====================
 
 router.patch("/:id/restore",
-    validateParams(variantIdSchema),
-    variantController.restore
+    validateParams(variantIdParamsSchema),
+    variantController.restore,
 );
 
+
+// ====================
+// DELETE VARIANT
+// ====================
+
 router.delete("/:id",
-    validateParams(variantIdSchema),
-    variantController.delete
+    validateParams(variantIdParamsSchema),
+    variantController.delete,
 );
+
 
 export const variantRouter = router;

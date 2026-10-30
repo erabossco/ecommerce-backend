@@ -32,19 +32,25 @@ export const variantProductIdSchema = z.object({
         }),
 });
 
+// =================
+// VARIANT ID PARAMS
+// =================
+export const variantIdParamsSchema = variantProductIdSchema.extend({
+    id: z
+        .string({
+            error: ERROR_MESSAGES.INVALID_VARIANT_ID,
+        })
+        .trim()
+        .regex(/^[a-z][a-z0-9]{23}$/, {
+            error: ERROR_MESSAGES.INVALID_VARIANT_ID,
+        }),
+});
+
+
 // ================
 // CREATE VARIANT
 // ================
 export const createVariantSchema = z.object({
-    productId: z
-        .string({
-            error: ERROR_MESSAGES.INVALID_PRODUCT_ID,
-        })
-        .trim()
-        .regex(/^[a-z][a-z0-9]{23}$/, {
-            error: ERROR_MESSAGES.INVALID_PRODUCT_ID,
-        }),
-
     sku: z
         .string({
             error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
@@ -147,11 +153,7 @@ export const createVariantSchema = z.object({
 // ================
 
 export const updateVariantSchema =
-    createVariantSchema
-        .omit({
-            productId: true,
-        })
-        .partial();
+    createVariantSchema.partial();
 
 // ============
 // SKU
