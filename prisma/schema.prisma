@@ -177,7 +177,6 @@ model Category {
   updatedAt DateTime @updatedAt
 
   @@index([name])
-  @@index([slug])
   @@index([parentId])
   @@index([parentId, isActive])
   @@index([isActive])
@@ -222,6 +221,12 @@ model Product {
   shortDescription String?
   description      String?
 
+  model               String?
+  manufacturer        String?
+  warrantyPeriod      Int? // Duration in months
+  warrantyDescription String?
+  tags                String[] @default([])
+
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
@@ -237,8 +242,7 @@ model Product {
   metaTitle       String?
   metaDescription String?
 
-  attributes ProductAttribute[]
-  variants   ProductVariant[]
+  variants ProductVariant[]
 
   deletedAt DateTime?
 
@@ -253,6 +257,53 @@ model Product {
   @@index([isFeatured])
   @@index([isPublished])
   @@index([sortOrder])
+  @@index([deletedAt])
+}
+
+// ============================
+// PRODUCT VARIANT MODEL
+// ============================
+
+model ProductVariant {
+  id String @id @default(cuid(2))
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  images ProductImage[]
+
+  sku     String  @unique
+  barcode String? @unique
+
+  name            String?
+  countryOfOrigin String?
+  color           String?
+  size            String?
+  weight          Decimal? @db.Decimal(10, 2)
+  length          Decimal? @db.Decimal(10, 2)
+  width           Decimal? @db.Decimal(10, 2)
+  height          Decimal? @db.Decimal(10, 2)
+  description     String?
+
+  price     Decimal  @db.Decimal(10, 2)
+  costPrice Decimal? @db.Decimal(10, 2)
+
+  isDefault Boolean @default(false)
+  isActive  Boolean @default(true)
+
+  trackInventory Boolean @default(true)
+
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  inventory Inventory?
+
+  @@index([productId])
+  @@index([productId, isActive])
+  @@index([isDefault])
+  @@index([isActive])
   @@index([deletedAt])
 }
 
@@ -278,119 +329,6 @@ model ProductImage {
   @@index([variantId])
   @@index([isPrimary])
   @@index([sortOrder])
-}
-
-// =========================
-// PRODUCT ATTRIBUTE MODEL
-// =========================
-
-model ProductAttribute {
-  id String @id @default(cuid(2))
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  name String
-
-  sortOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  values AttributeValue[]
-
-  @@unique([productId, name])
-  @@index([productId])
-  @@index([sortOrder])
-}
-
-// ==============================
-// ATTRIBUTE VALUE MODEL
-// ==============================
-
-model AttributeValue {
-  id String @id @default(cuid(2))
-
-  attributeId String
-  attribute   ProductAttribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
-
-  value String
-
-  sortOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  variants VariantAttribute[]
-
-  @@unique([attributeId, value])
-  @@index([attributeId])
-  @@index([sortOrder])
-}
-
-// ============================
-// PRODUCT VARIANT MODEL
-// ============================
-
-model ProductVariant {
-  id String @id @default(cuid(2))
-
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  images ProductImage[]
-
-  sku     String  @unique
-  barcode String?
-
-  price     Decimal  @db.Decimal(10, 2)
-  costPrice Decimal? @db.Decimal(10, 2)
-
-  isDefault Boolean @default(false)
-  isActive  Boolean @default(true)
-
-  trackInventory Boolean @default(true)
-
-  weight Decimal? @db.Decimal(10, 2)
-  length Decimal? @db.Decimal(10, 2)
-  width  Decimal? @db.Decimal(10, 2)
-  height Decimal? @db.Decimal(10, 2)
-
-  deletedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  inventory         Inventory?
-  variantAttributes VariantAttribute[]
-
-  @@index([productId])
-  @@index([productId, isActive])
-  @@index([sku])
-  @@index([barcode])
-  @@index([isDefault])
-  @@index([isActive])
-  @@index([deletedAt])
-}
-
-// =========================
-// VARIANT ATTRIBUTE MODEL
-// =========================
-
-model VariantAttribute {
-  id String @id @default(cuid(2))
-
-  variantId String
-  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
-
-  attributeValueId String
-  attributeValue   AttributeValue @relation(fields: [attributeValueId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-
-  @@unique([variantId, attributeValueId])
-  @@index([variantId])
-  @@index([attributeValueId])
 }
 
 // =======================
