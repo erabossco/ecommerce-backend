@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
+import { VARIANT_ERRORS } from "./variant.errors.js";
 
 // =======================
 // PRODUCT VARIANT ID
@@ -52,99 +53,91 @@ export const variantIdParamsSchema = variantProductIdSchema.extend({
 // ================
 export const createVariantSchema = z.object({
     sku: z
-        .string({
-            error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
-        })
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_SKU })
         .trim()
-        .min(1, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
-        })
-        .max(100, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
-        }),
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_SKU })
+        .max(100, { error: VARIANT_ERRORS.INVALID_VARIANT_SKU }),
 
     barcode: z
-        .string({
-            error: ERROR_MESSAGES.INVALID_VARIANT_BARCODE,
-        })
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_BARCODE })
         .trim()
-        .min(1, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_BARCODE,
-        })
-        .max(100, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_BARCODE,
-        })
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_BARCODE })
+        .max(100, { error: VARIANT_ERRORS.INVALID_VARIANT_BARCODE })
+        .optional(),
+    name: z
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_NAME })
+        .trim()
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_NAME })
+        .max(100, { error: VARIANT_ERRORS.INVALID_VARIANT_NAME })
         .optional(),
 
-    price: z
-        .number({
-            error: ERROR_MESSAGES.INVALID_VARIANT_PRICE,
-        })
-        .nonnegative({
-            error: ERROR_MESSAGES.INVALID_VARIANT_PRICE,
-        }),
-
-    costPrice: z
-        .number({
-            error: ERROR_MESSAGES.INVALID_VARIANT_COST_PRICE,
-        })
-        .nonnegative({
-            error: ERROR_MESSAGES.INVALID_VARIANT_COST_PRICE,
-        })
+    countryOfOrigin: z
+        .string({ error: VARIANT_ERRORS.INVALID_COUNTRY_OF_ORIGIN })
+        .trim()
+        .min(1, { error: VARIANT_ERRORS.INVALID_COUNTRY_OF_ORIGIN })
+        .max(50, { error: VARIANT_ERRORS.INVALID_COUNTRY_OF_ORIGIN })
         .optional(),
 
-    isDefault: z
-        .boolean({
-            error: ERROR_MESSAGES.INVALID_VARIANT_DEFAULT,
-        })
+    color: z
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_COLOR })
+        .trim()
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_COLOR })
+        .max(30, { error: VARIANT_ERRORS.INVALID_VARIANT_COLOR })
         .optional(),
 
-    isActive: z
-        .boolean({
-            error: ERROR_MESSAGES.INVALID_VARIANT_ACTIVE,
-        })
-        .optional(),
-
-    trackInventory: z
-        .boolean({
-            error: ERROR_MESSAGES.INVALID_TRACK_INVENTORY,
-        })
+    size: z
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_SIZE })
+        .trim()
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_SIZE })
+        .max(30, { error: VARIANT_ERRORS.INVALID_VARIANT_SIZE })
         .optional(),
 
     weight: z
-        .number({
-            error: ERROR_MESSAGES.INVALID_VARIANT_WEIGHT,
-        })
-        .positive({
-            error: ERROR_MESSAGES.INVALID_VARIANT_WEIGHT,
-        })
+        .number({ error: VARIANT_ERRORS.INVALID_VARIANT_WEIGHT })
+        .positive({ error: VARIANT_ERRORS.INVALID_VARIANT_WEIGHT })
         .optional(),
 
     length: z
-        .number({
-            error: ERROR_MESSAGES.INVALID_VARIANT_LENGTH,
-        })
-        .positive({
-            error: ERROR_MESSAGES.INVALID_VARIANT_LENGTH,
-        })
+        .number({ error: VARIANT_ERRORS.INVALID_VARIANT_LENGTH })
+        .positive({ error: VARIANT_ERRORS.INVALID_VARIANT_LENGTH })
         .optional(),
 
     width: z
-        .number({
-            error: ERROR_MESSAGES.INVALID_VARIANT_WIDTH,
-        })
-        .positive({
-            error: ERROR_MESSAGES.INVALID_VARIANT_WIDTH,
-        })
+        .number({ error: VARIANT_ERRORS.INVALID_VARIANT_WIDTH })
+        .positive({ error: VARIANT_ERRORS.INVALID_VARIANT_WIDTH })
         .optional(),
 
     height: z
-        .number({
-            error: ERROR_MESSAGES.INVALID_VARIANT_HEIGHT,
-        })
-        .positive({
-            error: ERROR_MESSAGES.INVALID_VARIANT_HEIGHT,
-        })
+        .number({ error: VARIANT_ERRORS.INVALID_VARIANT_HEIGHT })
+        .positive({ error: VARIANT_ERRORS.INVALID_VARIANT_HEIGHT })
+        .optional(),
+
+    price: z
+        .number({ error: VARIANT_ERRORS.INVALID_VARIANT_PRICE })
+        .nonnegative({ error: VARIANT_ERRORS.INVALID_VARIANT_PRICE }),
+
+    costPrice: z
+        .number({ error: VARIANT_ERRORS.INVALID_VARIANT_COST_PRICE })
+        .nonnegative({ error: VARIANT_ERRORS.INVALID_VARIANT_COST_PRICE })
+        .optional(),
+
+    description: z
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_DESCRIPTION })
+        .trim()
+        .min(5, { error: VARIANT_ERRORS.INVALID_VARIANT_DESCRIPTION })
+        .max(1000, { error: VARIANT_ERRORS.INVALID_VARIANT_DESCRIPTION })
+        .optional(),
+
+    isDefault: z
+        .boolean({ error: VARIANT_ERRORS.INVALID_VARIANT_DEFAULT })
+        .optional(),
+
+    isActive: z
+        .boolean({ error: VARIANT_ERRORS.INVALID_VARIANT_ACTIVE })
+        .optional(),
+
+    trackInventory: z
+        .boolean({ error: VARIANT_ERRORS.INVALID_TRACK_INVENTORY })
         .optional(),
 });
 
@@ -161,16 +154,10 @@ export const updateVariantSchema =
 
 export const variantSkuSchema = z.object({
     sku: z
-        .string({
-            error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
-        })
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_SKU })
         .trim()
-        .min(1, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
-        })
-        .max(100, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_SKU,
-        }),
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_SKU })
+        .max(100, { error: VARIANT_ERRORS.INVALID_VARIANT_SKU }),
 });
 
 // =============
@@ -179,14 +166,8 @@ export const variantSkuSchema = z.object({
 
 export const variantBarcodeSchema = z.object({
     barcode: z
-        .string({
-            error: ERROR_MESSAGES.INVALID_VARIANT_BARCODE,
-        })
+        .string({ error: VARIANT_ERRORS.INVALID_VARIANT_BARCODE })
         .trim()
-        .min(1, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_BARCODE,
-        })
-        .max(100, {
-            error: ERROR_MESSAGES.INVALID_VARIANT_BARCODE,
-        }),
+        .min(1, { error: VARIANT_ERRORS.INVALID_VARIANT_BARCODE })
+        .max(100, { error: VARIANT_ERRORS.INVALID_VARIANT_BARCODE }),
 });

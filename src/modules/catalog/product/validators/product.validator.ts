@@ -38,6 +38,26 @@ export const createProductSchema = z.object({
         .cuid2({ error: ERROR_MESSAGES.INVALID_BRAND_ID })
         .optional()
         .nullable(),
+    model: z
+        .string({ error: PRODUCT_ERRORS.INVALID_MODEL })
+        .trim()
+        .max(100, { error: PRODUCT_ERRORS.INVALID_MODEL_LIMIT })
+        .optional(),
+
+    manufacturer: z
+        .string({ error: PRODUCT_ERRORS.INVALID_MANUFACTURER })
+        .trim()
+        .max(100, { error: PRODUCT_ERRORS.INVALID_MANUFACTURER_LIMIT })
+        .optional(),
+
+    warrantyPeriod: z
+        .number({ error: PRODUCT_ERRORS.INVALID_WARRANTY })
+        .int({ error: PRODUCT_ERRORS.INVALID_WARRANTY_PERIOD })
+        .optional(),
+
+    tags: z
+        .array(z.string({ error: PRODUCT_ERRORS.INVALID_TAGS }).trim())
+        .default([]),
 
     isActive: z
         .boolean()

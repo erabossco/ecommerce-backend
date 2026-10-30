@@ -24,4 +24,11 @@ export const PRODUCT_ERRORS = {
 
     CATEGORY_NOT_FOUND: "Category not found.",
     BRAND_NOT_FOUND: "Brand not found.",
+    INVALID_MODEL: "Invalid model input",
+    INVALID_MODEL_LIMIT: "Invalid model text limit",
+    INVALID_MANUFACTURER: "Invalid manufacturer text",
+    INVALID_MANUFACTURER_LIMIT: "Invalid manufacturer text limit",
+    INVALID_WARRANTY: "Invalid warranty input",
+    INVALID_WARRANTY_PERIOD: "Invalid warranty period input",
+    INVALID_TAGS: "Invalid tags input",
 }
