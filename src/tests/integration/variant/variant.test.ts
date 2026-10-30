@@ -71,11 +71,13 @@ describe("Product Variant API", async () => {
 
     productId = product.body.data.id;
 
+
+    // =======================
+    // VARIANT TESTS START
+    // =======================
+
     // VARIANTS ENDPOINT
     const variantsEndpoint = `${productsEndpoint}/${productId}/variants`;
-
-
-    // VARIANT TEST STARTS
 
     describe("POST /products/:productId/variants", () => {
 

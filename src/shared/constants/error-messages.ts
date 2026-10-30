@@ -9,4 +9,5 @@ export const ERROR_MESSAGES = {
     INVALID_PRODUCT_SLUG: "Invalid product slug.",
     INVALID_VARIANT_ID: "Invalid variant ID.",
     INVALID_TRACK_INVENTORY: "Invalid variant inventory.",
+    INVALID_IMAGE_ID: "Invalid image ID",
 } as const;

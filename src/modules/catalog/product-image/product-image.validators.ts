@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PRODUCT_IMAGE_ERRORS } from "./product-image.errors.js";
+import { ERROR_MESSAGES } from "@/shared/constants/error-messages.js";
 
 // ============================
 // PRODUCT IMAGE PARAMS SCHEMAS
@@ -8,16 +9,20 @@ import { PRODUCT_IMAGE_ERRORS } from "./product-image.errors.js";
 export const productImageParamsSchema = z.object({
     productId: z
         .string()
-        .min(1, PRODUCT_IMAGE_ERRORS.PRODUCT_ID_REQUIRED),
+        .min(1, PRODUCT_IMAGE_ERRORS.PRODUCT_ID_REQUIRED)
+        .regex(/^[a-z][a-z0-9]{23}$/, ERROR_MESSAGES.INVALID_PRODUCT_ID),
+
     variantId: z
         .string()
-        .min(1, PRODUCT_IMAGE_ERRORS.VARIANT_ID_REQUIRED),
+        .min(1, PRODUCT_IMAGE_ERRORS.VARIANT_ID_REQUIRED)
+        .regex(/^[a-z][a-z0-9]{23}$/, ERROR_MESSAGES.INVALID_VARIANT_ID),
 });
 
 export const productImageIdParamsSchema = productImageParamsSchema.extend({
     imageId: z
         .string()
-        .min(1, PRODUCT_IMAGE_ERRORS.IMAGE_ID_REQUIRED),
+        .min(1, PRODUCT_IMAGE_ERRORS.IMAGE_ID_REQUIRED)
+        .regex(/^[a-z][a-z0-9]{23}$/, ERROR_MESSAGES.INVALID_IMAGE_ID),
 });
 
 // ============================

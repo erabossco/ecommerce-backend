@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { productImageService } from "./product-image.service.js";
 import type { CreateProductImageDto, UpdateProductImageDto, } from "./product-image.types.js";
+import { SUCCESS_MESSAGES } from "@/shared/constants/success-messages.js";
 
 // ============================
 // PRODUCT IMAGE CONTROLLER
@@ -13,11 +14,16 @@ export const productImageController = {
 
     async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { productId, variantId } = res.locals.params as { productId: string; variantId: string; };
-            const data = res.locals.body as CreateProductImageDto;
-            res.locals.data = await productImageService.create(productId, variantId, data);
+            const { productId, variantId } = res.locals.params;
+            const data = res.locals.body;
 
-            next();
+            const productImage = await productImageService.create(productId, variantId, data);
+
+            res.status(201).json({
+                success: true,
+                message: SUCCESS_MESSAGES.CREATED,
+                data: productImage,
+            });
         } catch (error) {
             next(error);
         }
@@ -26,13 +32,17 @@ export const productImageController = {
     // ============================
     // GET ALL IMAGES BY VARIANT
     // ============================
-
     async findByVariant(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { productId, variantId } = res.locals.params as { productId: string; variantId: string; };
-            res.locals.data = await productImageService.findByVariant(productId, variantId);
+            const { productId, variantId } = res.locals.params;
 
-            next();
+            const productImages = await productImageService.findByVariant(productId, variantId);
+
+            res.status(200).json({
+                success: true,
+                message: SUCCESS_MESSAGES.FETCHED,
+                data: productImages,
+            });
         } catch (error) {
             next(error);
         }
@@ -44,10 +54,15 @@ export const productImageController = {
 
     async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { productId, variantId, imageId } = res.locals.params as { productId: string; variantId: string; imageId: string; };
-            res.locals.data = await productImageService.findById(productId, variantId, imageId);
+            const { productId, variantId, imageId } = res.locals.params;
 
-            next();
+            const productImage = await productImageService.findById(productId, variantId, imageId);
+
+            res.status(200).json({
+                success: true,
+                message: SUCCESS_MESSAGES.FETCHED,
+                data: productImage,
+            });
         } catch (error) {
             next(error);
         }
@@ -59,11 +74,21 @@ export const productImageController = {
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { productId, variantId, imageId } = res.locals.params as { productId: string; variantId: string; imageId: string; };
+            const { productId, variantId, imageId } = res.locals.params;
             const data = res.locals.body as UpdateProductImageDto;
-            res.locals.data = await productImageService.update(productId, variantId, imageId, data);
 
-            next();
+            const productImage = await productImageService.update(
+                productId,
+                variantId,
+                imageId,
+                data
+            );
+
+            res.status(200).json({
+                success: true,
+                message: SUCCESS_MESSAGES.UPDATED,
+                data: productImage,
+            });
         } catch (error) {
             next(error);
         }
@@ -75,10 +100,15 @@ export const productImageController = {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { productId, variantId, imageId } = res.locals.params as { productId: string; variantId: string; imageId: string; };
-            res.locals.data = await productImageService.delete(productId, variantId, imageId);
+            const { productId, variantId, imageId } = res.locals.params;
 
-            next();
+            const productImage = await productImageService.delete(productId, variantId, imageId);
+
+            res.status(200).json({
+                success: true,
+                message: SUCCESS_MESSAGES.DELETED,
+                data: productImage,
+            });
         } catch (error) {
             next(error);
         }
