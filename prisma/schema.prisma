@@ -56,6 +56,7 @@ model User {
   sessions                Session[]
   emailVerificationTokens EmailVerificationToken[]
   passwordResetTokens     PasswordResetToken[]
+  carts                   Cart[]
 
   @@index([email])
   @@index([role])
@@ -299,6 +300,7 @@ model ProductVariant {
   updatedAt DateTime @updatedAt
 
   inventory Inventory?
+  cartItems CartItem[]
 
   @@index([productId])
   @@index([productId, isActive])
@@ -352,4 +354,44 @@ model Inventory {
   updatedAt DateTime @updatedAt
 
   @@index([quantity])
+}
+
+// =====================
+// CART MODEL
+// =====================
+
+model Cart {
+  id String @id @default(cuid(2))
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId])
+}
+
+// =====================
+// CART ITEM MODEL
+// =====================
+
+model CartItem {
+  id String @id @default(cuid(2))
+
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  variantId String
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  quantity Int @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, variantId])
+  @@index([variantId])
 }
