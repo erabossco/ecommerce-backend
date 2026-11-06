@@ -24,6 +24,12 @@ enum AuthProvider {
   FACEBOOK
 }
 
+enum AddressType {
+  HOME
+  OFFICE
+  OTHER
+}
+
 // ===========================
 // USER MODEL
 // ===========================
@@ -57,10 +63,42 @@ model User {
   emailVerificationTokens EmailVerificationToken[]
   passwordResetTokens     PasswordResetToken[]
   carts                   Cart[]
-  customer                Customer?
+  addresses               Address[]
 
   @@index([email])
   @@index([role])
+}
+
+// ===========================
+// ADDRESS MODEL
+// ===========================
+
+model Address {
+  id String @id @default(cuid(2))
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fullName String
+  phone    String
+
+  addressLine1 String
+  addressLine2 String?
+
+  city       String
+  state      String?
+  postalCode String?
+  country    String
+
+  addressType AddressType @default(HOME)
+
+  isDefaultShipping Boolean @default(false)
+  isDefaultBilling  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // =======================
@@ -397,68 +435,4 @@ model CartItem {
 
   @@unique([cartId, variantId])
   @@index([variantId])
-}
-
-// ===========================
-// CUSTOMER MODEL
-// ===========================
-
-enum Title {
-  MR
-  MRS
-  MS
-}
-
-model Customer {
-  id String @id @default(cuid(2))
-
-  userId String @unique
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  phone       String?
-  dateOfBirth DateTime?
-  title      Title?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  addresses Address[]
-}
-
-// ===========================
-// ADDRESS MODEL
-// ===========================
-
-enum AddressType {
-  HOME
-  OFFICE
-  OTHER
-}
-
-model Address {
-  id String @id @default(cuid(2))
-
-  customerId String
-  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
-  fullName String
-  phone    String
-
-  addressLine1 String
-  addressLine2 String?
-
-  city       String
-  state      String?
-  postalCode String?
-  country    String
-
-  addressType AddressType @default(HOME)
-
-  isDefaultShipping Boolean @default(false)
-  isDefaultBilling  Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([customerId])
 }
