@@ -16,7 +16,7 @@ class AddressController {
 
     async findAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = res.locals.user.userId as string;
+            const userId = req.user!.userId as string;
 
             const addresses = await addressService.findAllByUserId(userId);
 
@@ -37,7 +37,7 @@ class AddressController {
 
     async findById(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = res.locals.user.userId as string;
+            const userId = req.user!.userId as string;
             const { addressId } = res.locals.params as AddressIdParams;
 
             const address = await addressService.findById(userId, addressId);
@@ -59,7 +59,7 @@ class AddressController {
 
     async create(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = res.locals.user.userId as string;
+            const userId = req.user!.userId as string;
             const data = res.locals.body as CreateAddressInput;
 
             const address = await addressService.create(userId, data);
@@ -81,7 +81,7 @@ class AddressController {
 
     async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = res.locals.user.userId as string;
+            const userId = req.user!.userId as string;
             const { addressId } = res.locals.params as AddressIdParams;
             const data = res.locals.body as UpdateAddressInput;
 
@@ -104,7 +104,7 @@ class AddressController {
 
     async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const userId = res.locals.user.userId as string;
+            const userId = req.user!.userId as string;
             const { addressId } = res.locals.params as AddressIdParams;
 
             await addressService.delete(userId, addressId);
