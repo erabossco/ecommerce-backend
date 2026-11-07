@@ -1,4 +1,4 @@
-import type { Prisma } from "@prisma/client";
+import type { Cart, CartItem, Prisma } from "@prisma/client";
 import { prisma } from "@/infrastructure/database/prisma/prisma.client.js";
 
 // ============================
@@ -58,7 +58,7 @@ class CartRepository {
     // FIND CART BY ID
     // ============================
 
-    async findById(cartId: string) {
+    async findById(cartId: string): Promise<Cart | null> {
         return await prisma.cart.findUnique({
             where: { id: cartId },
             include: cartInclude,
@@ -69,7 +69,7 @@ class CartRepository {
     // FIND CART BY USER ID
     // ============================
 
-    async findByUserId(userId: string) {
+    async findByUserId(userId: string): Promise<Cart | null> {
         return await prisma.cart.findUnique({
             where: { userId },
             include: cartInclude,
@@ -80,7 +80,7 @@ class CartRepository {
     // FIND CART BY GUEST TOKEN HASH
     // ============================
 
-    async findByGuestTokenHash(guestTokenHash: string) {
+    async findByGuestTokenHash(guestTokenHash: string): Promise<Cart | null> {
         return await prisma.cart.findUnique({
             where: { guestTokenHash },
             include: cartInclude,
@@ -91,7 +91,7 @@ class CartRepository {
     // FIND OR CREATE CART BY USER ID
     // ============================
 
-    async findOrCreateByUserId(userId: string) {
+    async findOrCreateByUserId(userId: string): Promise<Cart> {
         return await prisma.cart.upsert({
             where: { userId },
             update: {},
@@ -104,7 +104,7 @@ class CartRepository {
     // CREATE GUEST CART
     // ============================
 
-    async createGuestCart(guestTokenHash: string, expiresAt: Date) {
+    async createGuestCart(guestTokenHash: string, expiresAt: Date): Promise<Cart> {
         return await prisma.cart.create({
             data: {
                 guestTokenHash,
@@ -118,7 +118,7 @@ class CartRepository {
     // CLAIM GUEST CART
     // ============================
 
-    async claimGuestCart(cartId: string, guestTokenHash: string, userId: string) {
+    async claimGuestCart(cartId: string, guestTokenHash: string, userId: string): Promise<Prisma.BatchPayload> {
         return await prisma.cart.updateMany({
             where: {
                 id: cartId,
@@ -137,7 +137,7 @@ class CartRepository {
     // FIND CART ITEM BY ID
     // ============================
 
-    async findItemById(cartId: string, itemId: string) {
+    async findItemById(cartId: string, itemId: string): Promise<Prisma.CartItemGetPayload<{ include: typeof cartItemInclude }> | null> {
         return await prisma.cartItem.findFirst({
             where: {
                 id: itemId,
@@ -151,7 +151,7 @@ class CartRepository {
     // FIND CART ITEM BY VARIANT
     // ============================
 
-    async findItemByVariant(cartId: string, variantId: string) {
+    async findItemByVariant(cartId: string, variantId: string): Promise<Prisma.CartItemGetPayload<{ include: typeof cartItemInclude }> | null> {
         return await prisma.cartItem.findUnique({
             where: {
                 cartId_variantId: {
@@ -167,7 +167,7 @@ class CartRepository {
     // ADD OR INCREMENT CART ITEM
     // ============================
 
-    async upsertItem(cartId: string, variantId: string, quantity: number) {
+    async upsertItem(cartId: string, variantId: string, quantity: number): Promise<Prisma.CartItemGetPayload<{ include: typeof cartItemInclude }>> {
         return await prisma.cartItem.upsert({
             where: {
                 cartId_variantId: {
@@ -193,7 +193,7 @@ class CartRepository {
     // UPDATE CART ITEM QUANTITY
     // ============================
 
-    async updateItemQuantity(cartId: string, itemId: string, quantity: number) {
+    async updateItemQuantity(cartId: string, itemId: string, quantity: number): Promise<Prisma.BatchPayload> {
         return await prisma.cartItem.updateMany({
             where: {
                 id: itemId,
@@ -209,7 +209,7 @@ class CartRepository {
     // DELETE CART ITEM
     // ============================
 
-    async deleteItem(cartId: string, itemId: string) {
+    async deleteItem(cartId: string, itemId: string): Promise<Prisma.BatchPayload> {
         return await prisma.cartItem.deleteMany({
             where: {
                 id: itemId,
@@ -222,7 +222,10 @@ class CartRepository {
     // FIND PRODUCT VARIANT BY ID
     // ============================
 
-    async findVariantById(variantId: string) {
+    async findVariantById(variantId: string): Promise<Prisma.ProductVariantGetPayload<{
+        include: { product: true; inventory: true; };
+    }> | null> {
+
         return await prisma.productVariant.findUnique({
             where: { id: variantId },
             include: {
@@ -236,7 +239,7 @@ class CartRepository {
     // MERGE GUEST CART INTO USER CART
     // ============================
 
-    async mergeGuestCart(guestCartId: string, userCartId: string) {
+    async mergeGuestCart(guestCartId: string, userCartId: string): Promise<Prisma.CartGetPayload<{ include: typeof cartInclude }> | null> {
 
         return await prisma.$transaction(async (tx) => {
 
@@ -286,7 +289,7 @@ class CartRepository {
     // DELETE GUEST CART
     // ============================
 
-    async deleteGuestCart(cartId: string, guestTokenHash: string) {
+    async deleteGuestCart(cartId: string, guestTokenHash: string): Promise<Prisma.BatchPayload> {
         return await prisma.cart.deleteMany({
             where: {
                 id: cartId,
@@ -300,7 +303,7 @@ class CartRepository {
     // CLEAR CART
     // ============================
 
-    async clearItems(cartId: string) {
+    async clearItems(cartId: string): Promise<Prisma.BatchPayload> {
         return await prisma.cartItem.deleteMany({
             where: { cartId },
         });
